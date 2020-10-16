@@ -13,4 +13,11 @@ public class AbilityCardView : MonoBehaviour
         _costTextUI.text = abilityCard.Cost.ToString();
         _graphicUI.sprite = abilityCard.Graphic;
     }
+
+    public void EmptyDisplay()
+    {
+        _nameTextUI.text = "None";
+        _costTextUI.text = "None";
+        _graphicUI.sprite = null;
+    }
 }

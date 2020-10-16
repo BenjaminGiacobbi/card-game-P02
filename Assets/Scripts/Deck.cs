@@ -130,6 +130,14 @@ public class Deck<T> where T : Card // called a constraint
             Emptied?.Invoke();
     }
 
+    public void Empty()
+    {
+        for(int i = 0; i < Count; i++)
+        {
+            Remove(i);
+        }
+    }
+
     // retrieves card without removing, though no signal
     public T GetCard(int index)
     {
