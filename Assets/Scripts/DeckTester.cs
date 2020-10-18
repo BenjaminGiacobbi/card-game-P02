@@ -7,23 +7,22 @@ public class DeckTester : MonoBehaviour
     public event Action<Deck<AbilityCard>> CurrentHand = delegate { };
     public event Action<Deck<AbilityCard>> CurrentDiscard = delegate { };
     public event Action<Deck<AbilityCard>> CurrentMainDeck = delegate { };
+    public event Action<Deck<BoostCard>> CurrentBoostDeck = delegate { };
 
+    [Header("Deck Configurations")]
     [SerializeField] List<AbilityCardData> _abilityDeckConfig = new List<AbilityCardData>();
-    [SerializeField] AbilityCardView _abilityCardView = null;
-    [SerializeField] int _maxHandSize = 5;
+    [SerializeField] List<BoostCardData> _boostDeckConfig = new List<BoostCardData>();
+    [SerializeField] PlayerController _player = null;
     public Deck<AbilityCard> _abilityDeck = new Deck<AbilityCard>();
     public Deck<AbilityCard> _abilityDiscard = new Deck<AbilityCard>();
     public Deck<AbilityCard> _playerHand = new Deck<AbilityCard>();
+    public Deck<BoostCard> _boostDeck = new Deck<BoostCard>();
+    
 
     void Start()
     {
         SetupAbilityDeck();
-
-        // Create some new cards
-        
-        // Draw a new card from the deck
-
-        // play the new card
+        SetupBoostDeck();
     }
 
     private void SetupAbilityDeck()
@@ -38,35 +37,50 @@ public class DeckTester : MonoBehaviour
         CurrentMainDeck?.Invoke(_abilityDeck);
     }
 
+    private void SetupBoostDeck()
+    {
+        foreach(BoostCardData boostData in _boostDeckConfig)
+        {
+            BoostCard newBoostCard = new BoostCard(boostData);
+            _boostDeck.Add(newBoostCard);
+        }
+
+        _boostDeck.Shuffle();
+        CurrentBoostDeck?.Invoke(_boostDeck);
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
             Draw();
         }
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            PrintPlayerHand();
-        }
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            PrintDeck(_playerHand);
-            PrintDeck(_abilityDeck);
-            PrintDeck(_abilityDiscard);
-        }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            PlayTopCard();
+            PlayTopAbilityCard();
+        }
+        if(Input.GetKeyDown(KeyCode.B))
+        {
+            PlayTopBoostCard();
+        }
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            ChangeTurn();
         }
         if (Input.GetKeyDown(KeyCode.R))
         {
             ReshuffleDiscard();
         }
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            AddEnergy();
+        }
     }
 
+    // draws a card and adds it to player hand
     private void Draw()
     {
-        if(_playerHand.Count < _maxHandSize)
+        if(_playerHand.Count < _player.MaxHandSize)
         {
             AbilityCard newCard = _abilityDeck.Draw(DeckPosition.Top);
             if (newCard != null)
@@ -84,19 +98,12 @@ public class DeckTester : MonoBehaviour
         }
         else
         {
-            Debug.Log("Cannot draw more than " + _maxHandSize + " cards!");
+            Debug.Log("Cannot draw more than " + _player.MaxHandSize + " cards!");
         }
         
     }
 
-    private void PrintPlayerHand()
-    {
-        for (int i = 0; i < _playerHand.Count; i++)
-        {
-            Debug.Log("Player Hand Card: " + _playerHand.GetCard(i).Name);
-        }
-    }
-
+    // prints the contents of the deck, mostly for debug purposes
     private void PrintDeck(Deck<AbilityCard> deckToPrint)
     {
         string printString = "";
@@ -110,11 +117,23 @@ public class DeckTester : MonoBehaviour
         Debug.Log(deckToPrint.ToString() + ": " + printString);
     }
 
-    private void PlayTopCard()
+    // adds energy for testing purposes
+    private void AddEnergy()
+    {
+        _player.PlayerEnergy++;
+        if(_player.PlayerEnergy > 99)
+        {
+            Debug.Log("Maximum energy!");
+            _player.PlayerEnergy = 99;
+        }
+    }
+
+    private void PlayTopAbilityCard()
     {
         AbilityCard targetCard = _playerHand.TopItem;
-        if (targetCard != null)
+        if (targetCard != null && targetCard.Cost <= _player.PlayerEnergy)
         {
+            _player.PlayerEnergy -= targetCard.Cost;
             targetCard.Play();
             // TODO expand remove to accept a deck position
             _playerHand.Remove(_playerHand.LastIndex);
@@ -125,18 +144,34 @@ public class DeckTester : MonoBehaviour
         }
     }
 
+    private void PlayTopBoostCard()
+    {
+        BoostCard targetCard = _boostDeck.Draw();
+        if (targetCard != null)
+        {
+            targetCard.Play();
+
+            // doesn't maintain boost card if it's out of uses
+            if (targetCard.Uses == 0)
+                return;
+            else
+                _boostDeck.Add(targetCard, DeckPosition.Bottom);
+            CurrentBoostDeck?.Invoke(_boostDeck);
+        }
+    }
+
     // TODO currently this always only iterates to half, rounded up, of the possible iterations in Discard.Count
     private void ReshuffleDiscard()
     {
-        Debug.Log("Discard count: " + _abilityDiscard.Count);
+        
         if(_abilityDiscard.Count > 0)
         {
-            for(int i = 0; i < _abilityDiscard.Count; i++)
+            Debug.Log("Reshuffling Discard Pile into Main Deck!");
+            int _discardCount = _abilityDiscard.Count;
+            for (int i = 0; i < _discardCount; i++)
             {
                 // TODO might do something more here with the Add(List<T> function)
-                AbilityCard transferCard = _abilityDiscard.Draw();
-                Debug.Log(transferCard);
-                _abilityDeck.Add(transferCard);
+                _abilityDeck.Add(_abilityDiscard.Draw());
             }
             CurrentDiscard?.Invoke(_abilityDiscard);
         }
@@ -146,5 +181,11 @@ public class DeckTester : MonoBehaviour
             _abilityDeck.Shuffle();
 
         CurrentMainDeck?.Invoke(_playerHand);
+    }
+
+    private void ChangeTurn()
+    {
+        Debug.Log("Resetting Boosts!");
+        _player.OnTurn();
     }
 }

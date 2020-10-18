@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06820e6882fe0b443940bccad95ac892, type: 3}
+  m_Name: Boost_ForceField
+  m_EditorClassIdentifier: 
+  _name: Force Field
+  _uses: 2
+  _graphic: {fileID: 21300000, guid: 0ffdda57bba08514f85ab5a5f11d4b19, type: 3}
+  _playEffect: {fileID: 11400000, guid: 60cec61f7fd22a8499444ced62382c58, type: 2}

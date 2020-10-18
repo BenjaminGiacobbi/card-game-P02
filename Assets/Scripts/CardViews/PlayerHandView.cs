@@ -20,15 +20,9 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
         _viewArray = new GameObject[deck.Count];
         for (int i = 0; i < deck.Count; i++)
         {
-            _viewArray[i] = Instantiate(_abilityCardPrefab.gameObject, _gridLayout.transform);
+            _viewArray[i] = Instantiate(_abilityCardPrefab.gameObject, transform);
             _viewArray[i].GetComponent<AbilityCardView>()?.Display(deck.GetCard(i));
-            
         }
-    }
-
-    public void HideDeck()
-    {
-        gameObject.SetActive(false);
     }
 
     private void ClearArray()

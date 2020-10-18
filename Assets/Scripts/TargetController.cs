@@ -6,8 +6,14 @@ public class TargetController : MonoBehaviour
 {
     // TODO built a more structured connection, maybe singleton?
     public static ITargetable CurrentTarget;
+    public static PlayerController CurrentPlayer;
 
     [SerializeField] Creature _objectToTarget = null;
+
+    private void Start()
+    {
+        CurrentPlayer = FindObjectOfType<PlayerController>();
+    }
 
     // Update is called once per frame
     void Update()

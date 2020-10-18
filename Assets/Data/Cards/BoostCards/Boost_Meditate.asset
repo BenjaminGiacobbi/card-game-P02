@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06820e6882fe0b443940bccad95ac892, type: 3}
+  m_Name: Boost_Meditate
+  m_EditorClassIdentifier: 
+  _name: Meditate
+  _uses: 6
+  _graphic: {fileID: 21300000, guid: ef73be655dbdc2641912357552514db9, type: 3}
+  _playEffect: {fileID: 11400000, guid: b13cfa77f87b71640bc4b6597f4f7db8, type: 2}
