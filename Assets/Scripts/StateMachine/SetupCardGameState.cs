@@ -1,11 +1,17 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 public class SetupCardGameState : CardGameState
 {
+    // need a better way to do events like this, it's getting reptitive
+    public static event Action StartedSetup = delegate { };
+    public static event Action EndedSetup = delegate { };
+
     [SerializeField] int _startingCardNumber = 10;
     [SerializeField] int _numberOfPlayers = 2;
-
-    bool _activated = false;
+    [SerializeField] Button _nextButton = null;
+    [SerializeField] DeckTester _tester = null;
 
     public override void Enter()
     {
@@ -14,21 +20,36 @@ public class SetupCardGameState : CardGameState
         Debug.Log("Creating deck with " + _startingCardNumber + " cards.");
         // CANT change state while still in Enter/Exit
         // DONT put ChangeState<> here
-        _activated = false;
+
+        // instantiate player and associated decks from... resources? I don't know the best way to load cards
+        _tester.SetupAbilityDeck();
+        _tester.SetupBoostDeck();
+
+        if (_nextButton != null)
+            _nextButton.onClick.AddListener(ToBoostState);
+        StartedSetup?.Invoke();
     }
 
     public override void Tick()
     {
-        // a hacky solution, recommends delays or input
-        if(!_activated)
+        // probably better to use a delay here
+        if(_nextButton == null)
         {
-            _activated = true;
-            StateMachine.ChangeState<PlayerTurnCardGameState>();
+            Debug.LogError("Setup Continue button not set. Bouncing to main menu");
+            StateMachine.ChangeState<MenuCardGameState>();
         }
     }
 
     public override void Exit()
     {
         Debug.Log("Setup: Exiting...");
+        _nextButton.onClick.RemoveListener(ToBoostState);
+        EndedSetup?.Invoke();
+    }
+
+    // TODO not sure what ot name this
+    private void ToBoostState()
+    {
+        StateMachine.ChangeState<BoostStepCardGameState>();
     }
 }

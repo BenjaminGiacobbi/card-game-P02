@@ -9,7 +9,7 @@ public class CardGameSM : StateMachine
     {
         // set starting state, already on object
         // NOTE: this allows any states, not just CardGameStates, do change
-        ChangeState<SetupCardGameState>();
+        ChangeState<MenuCardGameState>();
     }
 
 }

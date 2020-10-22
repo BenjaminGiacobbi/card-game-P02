@@ -21,7 +21,7 @@ public class DiscardDeckView : MonoBehaviour, IDeckView<AbilityCard>
     {
         if (!deck.IsEmpty)
         {
-            _cardObject.GetComponent<AbilityCardView>().Display(deck.TopItem);
+            _cardObject.GetComponent<AbilityCardView>()?.Display(deck.TopItem);
             _cardObject.SetActive(true);
         }
         else
@@ -29,5 +29,11 @@ public class DiscardDeckView : MonoBehaviour, IDeckView<AbilityCard>
             _cardObject.SetActive(false);
         }
         _discardCountText.text = deck.Count.ToString();
+    }
+
+    public void HideDeck()
+    {
+        _cardObject.SetActive(false);
+        _cardObject.GetComponent<AbilityCardView>()?.EmptyDisplay();
     }
 }

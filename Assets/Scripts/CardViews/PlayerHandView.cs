@@ -25,6 +25,13 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
         }
     }
 
+    public void HideDeck()
+    {
+        Debug.Log("Test5");
+        ClearArray();
+        gameObject.SetActive(false);
+    }
+
     private void ClearArray()
     {
         if(_viewArray != null)
@@ -35,4 +42,6 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
             }
         }
     }
+
+    
 }

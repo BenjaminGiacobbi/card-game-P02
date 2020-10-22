@@ -4,6 +4,8 @@ using System;
 
 public class DeckTester : MonoBehaviour
 {
+    // TODO put this in a player action script that contains player decks and actions for other scripts to reference
+
     public event Action<Deck<AbilityCard>> CurrentHand = delegate { };
     public event Action<Deck<AbilityCard>> CurrentDiscard = delegate { };
     public event Action<Deck<AbilityCard>> CurrentMainDeck = delegate { };
@@ -17,15 +19,8 @@ public class DeckTester : MonoBehaviour
     public Deck<AbilityCard> _abilityDiscard = new Deck<AbilityCard>();
     public Deck<AbilityCard> _playerHand = new Deck<AbilityCard>();
     public Deck<BoostCard> _boostDeck = new Deck<BoostCard>();
-    
 
-    void Start()
-    {
-        SetupAbilityDeck();
-        SetupBoostDeck();
-    }
-
-    private void SetupAbilityDeck()
+    public void SetupAbilityDeck()
     {
         foreach(AbilityCardData abilityData in _abilityDeckConfig)
         {
@@ -37,7 +32,7 @@ public class DeckTester : MonoBehaviour
         CurrentMainDeck?.Invoke(_abilityDeck);
     }
 
-    private void SetupBoostDeck()
+    public void SetupBoostDeck()
     {
         foreach(BoostCardData boostData in _boostDeckConfig)
         {
@@ -128,7 +123,7 @@ public class DeckTester : MonoBehaviour
         }
     }
 
-    private void PlayTopAbilityCard()
+    public void PlayTopAbilityCard()
     {
         AbilityCard targetCard = _playerHand.TopItem;
         if (targetCard != null && targetCard.Cost <= _player.PlayerEnergy)
@@ -144,7 +139,7 @@ public class DeckTester : MonoBehaviour
         }
     }
 
-    private void PlayTopBoostCard()
+    public void PlayTopBoostCard()
     {
         BoostCard targetCard = _boostDeck.Draw();
         if (targetCard != null)

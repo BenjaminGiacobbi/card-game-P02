@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 
 // each state needs to attach to an object with a state machine,
 // therefore we can search with GetComponent in Awake

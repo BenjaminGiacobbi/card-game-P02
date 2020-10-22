@@ -17,4 +17,9 @@ public class PlayDeckView : MonoBehaviour, IDeckView<AbilityCard>
         _cardBackImage.gameObject.SetActive(true);
         _deckCountText.text = deck.Count.ToString();
     }
+
+    public void HideDeck()
+    {
+        _cardBackImage.gameObject.SetActive(false);
+    }
 }
