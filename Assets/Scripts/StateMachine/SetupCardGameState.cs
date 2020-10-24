@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 
@@ -8,10 +9,12 @@ public class SetupCardGameState : CardGameState
     public static event Action StartedSetup = delegate { };
     public static event Action EndedSetup = delegate { };
 
+    [Header("Deck Configurations")]
+    [SerializeField] List<AbilityCardData> _abilityDeckConfig = new List<AbilityCardData>();
+    [SerializeField] List<BoostCardData> _boostDeckConfig = new List<BoostCardData>();
     [SerializeField] int _startingCardNumber = 10;
     [SerializeField] int _numberOfPlayers = 2;
     [SerializeField] Button _nextButton = null;
-    [SerializeField] DeckTester _tester = null;
 
     public override void Enter()
     {
@@ -22,8 +25,8 @@ public class SetupCardGameState : CardGameState
         // DONT put ChangeState<> here
 
         // instantiate player and associated decks from... resources? I don't know the best way to load cards
-        _tester.SetupAbilityDeck();
-        _tester.SetupBoostDeck();
+        StateMachine.Player.SetupAbilityDeck(_abilityDeckConfig);
+        StateMachine.Player.SetupBoostDeck(_boostDeckConfig);
 
         if (_nextButton != null)
             _nextButton.onClick.AddListener(ToBoostState);

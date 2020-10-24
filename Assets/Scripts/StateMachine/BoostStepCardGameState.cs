@@ -9,7 +9,6 @@ public class BoostStepCardGameState : CardGameState
     public static event Action StartedBoostStep = delegate { };
     public static event Action EndedBoostStep = delegate { };
 
-    [SerializeField] DeckTester _deckTester = null;
     [SerializeField] Button _useBoostButton = null;
     [SerializeField] Button _skipBoostButton = null;
 
@@ -30,7 +29,7 @@ public class BoostStepCardGameState : CardGameState
     private void PlayBoostCard()
     {
         // access player controller and tell it to use top boost card/update whatever it needs
-        _deckTester.PlayTopBoostCard();
+        StateMachine.Player.PlayTopBoostCard();
         ToPlayerTurn();
     }
 

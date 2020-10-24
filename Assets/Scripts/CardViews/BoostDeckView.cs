@@ -18,9 +18,14 @@ public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
     public void ShowDeck(Deck<BoostCard> deck)
     {
         gameObject.SetActive(true);
+        Debug.Log("Test 2");
+        Debug.Log(deck.IsEmpty);
         if (!deck.IsEmpty)
         {
-            _cardObject.GetComponent<BoostCardView>()?.Display(deck.TopItem);
+            Debug.Log("test3");
+            BoostCardView cardView = _cardObject.GetComponent<BoostCardView>();
+            Debug.Log(cardView);
+            cardView.Display(deck.TopItem);
             _cardObject.SetActive(true);
         }
         else

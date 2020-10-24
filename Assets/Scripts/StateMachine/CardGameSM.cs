@@ -4,6 +4,8 @@ public class CardGameSM : StateMachine
 {
     [SerializeField] InputController _input = null;
     public InputController Input => _input;
+    [SerializeField] PlayerController _player = null;
+    public PlayerController Player => _player;
 
     void Start()
     {
@@ -12,4 +14,8 @@ public class CardGameSM : StateMachine
         ChangeState<MenuCardGameState>();
     }
 
+    private void Update()
+    {
+            
+    }
 }
