@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eebc151473140d64bb417e03a016c9da, type: 3}
   m_Name: BoostPlayEffect_AreaControl
   m_EditorClassIdentifier: 
-  _boostType: 3
+  _boostType: 2
   _boostValue: 2

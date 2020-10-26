@@ -12,24 +12,9 @@ public class DeckTester : MonoBehaviour
         {
             ChangeTurn();
         }
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            AddEnergy();
-        }
         if(Input.GetKeyDown(KeyCode.Space))
         {
             _player.TakeDamage(500);
-        }
-    }
-
-    // adds energy for testing purposes
-    private void AddEnergy()
-    {
-        _player.PlayerEnergy++;
-        if(_player.PlayerEnergy > 99)
-        {
-            Debug.Log("Maximum energy!");
-            _player.PlayerEnergy = 99;
         }
     }
 

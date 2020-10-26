@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
 {
     [SerializeField] BoostCardView _boostCardPrefab = null;
+    [SerializeField] PlayerController _player = null;
     private GameObject _cardObject = null;
 
     private void Start()
@@ -11,6 +12,7 @@ public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
         _cardObject = Instantiate(_boostCardPrefab.gameObject, transform);
         _cardObject.transform.SetSiblingIndex(0);
         _cardObject.transform.localPosition = Vector3.zero;
+        _boostCardPrefab.GetComponent<Button>()?.onClick.AddListener(_player.PlayTopBoostCard);
         _cardObject.SetActive(false);
         gameObject.SetActive(false);
     }
@@ -18,13 +20,9 @@ public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
     public void ShowDeck(Deck<BoostCard> deck)
     {
         gameObject.SetActive(true);
-        Debug.Log("Test 2");
-        Debug.Log(deck.IsEmpty);
         if (!deck.IsEmpty)
         {
-            Debug.Log("test3");
             BoostCardView cardView = _cardObject.GetComponent<BoostCardView>();
-            Debug.Log(cardView);
             cardView.Display(deck.TopItem);
             _cardObject.SetActive(true);
         }

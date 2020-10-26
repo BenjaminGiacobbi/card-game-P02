@@ -10,42 +10,47 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     public event Action<Deck<AbilityCard>> CurrentMainDeck = delegate { };
     public event Action<Deck<BoostCard>> CurrentBoostDeck = delegate { };
     public event Action GameOver = delegate { };
-    public event Action<int> EnergyChanged = delegate { };
     public event Action ActionEnd = delegate { };
-    public event Action HealthSet = delegate { };
+    public event Action<int> ActionsChanged = delegate { };
+    public event Action<int> HealthSet = delegate { };
+    public event Action<int> HandSizeChanged = delegate { };
+    public event Action<float> DefenseChanged = delegate { };
 
     public Deck<AbilityCard> _abilityDeck = new Deck<AbilityCard>();
     public Deck<AbilityCard> _abilityDiscard = new Deck<AbilityCard>();
     public Deck<AbilityCard> _playerHand = new Deck<AbilityCard>();
     public Deck<BoostCard> _boostDeck = new Deck<BoostCard>();
 
-    [SerializeField] int _maxHandSize = 5;
-    [SerializeField] float _energyModifier = 1.0f;
+    [SerializeField] int _maxHandSize = 10;
+    [SerializeField] int _startingHandSize = 5;
     [SerializeField] float _damageModifier = 1.0f;
-    [SerializeField] int _playerEnergy = 10;
+    [SerializeField] int _playerActions = 1;
     [SerializeField] int _maxPlayerHealth = 30;
     private int _currentHealth;
 
     public int MaxHandSize
     { get { return _maxHandSize; } private set { _maxHandSize = value; } }
-    
-    public int PlayerEnergy
+
+    public int PlayerActions
+    { get { return _playerActions; } private set { _playerActions = value; } }
+
+    /*
+    public int PlayerActions
     {
         get
         {
-            return _playerEnergy;
+            return _playerActions;
         }
-        set
+        private set
         {
-            float dif = _playerEnergy - value;
-            Debug.Log("Dif: " + Mathf.CeilToInt(dif * _energyModifier));
-            _playerEnergy = _playerEnergy - Mathf.CeilToInt(dif * _energyModifier);
-            if (_playerEnergy < 0)
-                _playerEnergy = 0;
-            EnergyChanged?.Invoke(_playerEnergy);
+            if (value <= 0)
+                _maxHandSize = 0;
+            else
+                _maxHandSize = value;
         }
     }
-    
+    */
+
     public int MaxPlayerHealth
     { get { return _maxPlayerHealth; } private set { _maxPlayerHealth = value; } }
 
@@ -64,9 +69,30 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
         }
     }
 
+    public int CurrentHandSize
+    { get { return _startingHandSize; } private set { _startingHandSize = value; } }
+
+    /*
+    public int CurrentHandSize
+    {
+        get
+        {
+            return _startingHandSize;
+        }
+        private set
+        {
+            if (value > MaxHandSize)
+                _startingHandSize = MaxHandSize;
+            else
+                _startingHandSize = value;
+        }
+    }
+    */
+
     private void Start()
     {
         CurrentHealth = MaxPlayerHealth;
+        HealthSet?.Invoke(CurrentHealth);
     }
 
     public void SetupAbilityDeck(List<AbilityCardData> abilityDeckConfig)
@@ -89,23 +115,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
             _boostDeck.Add(newBoostCard);
         }
 
-        Debug.Log("test1");
         _boostDeck.Shuffle();
         CurrentBoostDeck?.Invoke(_boostDeck);
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Q))
-        {
-            Draw();
-        }
-    }
-
     // draws a card and adds it to player hand
-    private void Draw()
+    public void Draw()
     {
-        if (_playerHand.Count < MaxHandSize)
+        if (_playerHand.Count < CurrentHandSize)
         {
             AbilityCard newCard = _abilityDeck.Draw(DeckPosition.Top);
             if (newCard != null)
@@ -131,12 +148,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     public void PlayAbilityCard(int index)
     {
         AbilityCard targetCard = _playerHand.GetCard(index);
-        if (targetCard != null && targetCard.Cost <= PlayerEnergy)
+        if (targetCard != null && PlayerActions > 0)
         {
-            PlayerEnergy -= targetCard.Cost;
+            PlayerActions--;
+            Debug.Log("Actions remaining: " + PlayerActions);
+            ActionsChanged?.Invoke(PlayerActions);
             targetCard.Play();
             // TODO expand remove to accept a deck position
-            _playerHand.Remove(_playerHand.LastIndex);
+            _playerHand.Remove(index);
             _abilityDiscard.Add(targetCard);
             CurrentDiscard?.Invoke(_abilityDiscard);
             CurrentHand?.Invoke(_playerHand);
@@ -146,15 +165,22 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
 
     public void PlayTopBoostCard()
     {
-        BoostCard targetCard = _boostDeck.Draw();
-        if (targetCard != null)
+        BoostCard targetCard = _boostDeck.TopItem;
+        if (targetCard != null && PlayerActions > 0)
         {
+            PlayerActions--;
+            Debug.Log("Playing Boost Card: " + targetCard.Name);
+            ActionsChanged?.Invoke(PlayerActions);
             targetCard.Play();
 
             // doesn't maintain boost card if it's out of uses
             if (targetCard.Uses == 0)
+            {
+                _boostDeck.Remove(_boostDeck.LastIndex);
                 return;
+            }
             else
+                _boostDeck.Remove(_boostDeck.LastIndex);
                 _boostDeck.Add(targetCard, DeckPosition.Bottom);
             CurrentBoostDeck?.Invoke(_boostDeck);
         }
@@ -186,14 +212,16 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     // for coordination with the state system, this would ideally be subscribed to a state change to start a turn
     public void OnTurn()
     {
-        _energyModifier = 1.0f;
         _damageModifier = 1.0f;
+        DefenseChanged?.Invoke(_damageModifier * 100);
+        PlayerActions = 1;
+        ActionsChanged?.Invoke(PlayerActions);
     }
 
     public void TakeDamage(int damage)
     {
         CurrentHealth -= damage;
-        HealthSet?.Invoke();
+        HealthSet?.Invoke(CurrentHealth);
         if( CurrentHealth < 0)
             Kill();
     }
@@ -209,18 +237,21 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
         // some targeting code, but this would be necesssary for the AI to target
     }
 
-    public void BoostEnergy(float modifier)
-    {
-        _energyModifier = modifier;
-    }
-
     public void BoostHealth(int value)
     {
         CurrentHealth += value;
+        HealthSet?.Invoke(CurrentHealth);
     }
 
     public void BoostDefense(float modifier)
     {
         _damageModifier = modifier;
+        DefenseChanged?.Invoke(1.0f / _damageModifier * 100);
+    }
+
+    public void BoostAction(int value)
+    {
+        _playerActions += value;
+        ActionsChanged?.Invoke(PlayerActions);
     }
 }

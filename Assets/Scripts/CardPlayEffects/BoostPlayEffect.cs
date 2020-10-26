@@ -18,21 +18,15 @@ public class BoostPlayEffect : CardPlayEffect
             switch (_boostType)
             {
                 case BoostType.Health:
-                    int value = Mathf.CeilToInt(_boostValue);
-                    player.BoostHealth(value);
+                    player.BoostHealth(Mathf.CeilToInt(_boostValue));
                     break;
-
-                case BoostType.Cost:
-                    player.BoostEnergy(_boostValue);
+                case BoostType.Action:
+                    player.BoostAction(Mathf.CeilToInt(_boostValue));
                     break;
-
                 case BoostType.Defense:
                     player.BoostDefense(_boostValue);
                     break;
-
-                case BoostType.Turn:
-                    // TODO add turn modifier here
-                    Debug.Log("Currently no turn boost functionality");
+                default:
                     break;
             }
         }
@@ -44,7 +38,6 @@ public class BoostPlayEffect : CardPlayEffect
 public enum BoostType
 {
     Health,
-    Cost,
     Defense,
-    Turn
+    Action
 }

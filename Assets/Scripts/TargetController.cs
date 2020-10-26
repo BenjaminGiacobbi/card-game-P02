@@ -10,7 +10,7 @@ public class TargetController : MonoBehaviour
 
     [SerializeField] Creature _objectToTarget = null;
 
-    private void Start()
+    private void Awake()
     {
         CurrentPlayer = FindObjectOfType<PlayerController>();
     }

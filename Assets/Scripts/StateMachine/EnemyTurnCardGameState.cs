@@ -34,6 +34,6 @@ public class EnemyTurnCardGameState : CardGameState
         EnemyTurnEnded?.Invoke();
 
         // turn over, return to player
-        StateMachine.ChangeState<PlayerTurnCardGameState>();
+        StateMachine.ChangeState<BoostStepCardGameState>();
     }
 }

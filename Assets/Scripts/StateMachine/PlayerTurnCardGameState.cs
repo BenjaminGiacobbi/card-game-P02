@@ -17,7 +17,7 @@ public class PlayerTurnCardGameState : CardGameState
     public override void Enter()
     {
         Debug.Log("Player Turn: ...Entering");
-        StartedPlayerTurn?.Invoke();
+        
         _playerTurnTextUI.gameObject.SetActive(true);
 
         _playerTurnCount++;
@@ -27,6 +27,7 @@ public class PlayerTurnCardGameState : CardGameState
         _nextButton.onClick.AddListener(OnPressedConfirm);
         _winButton.onClick.AddListener(ProceedToWin);
         _loseButton.onClick.AddListener(ProceedToLose);
+        StartedPlayerTurn?.Invoke();
     }
 
     public override void Exit()

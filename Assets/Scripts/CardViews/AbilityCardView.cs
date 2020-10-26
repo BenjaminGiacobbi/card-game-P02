@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 
 [RequireComponent(typeof(RectTransform))]
+[RequireComponent(typeof(Button))]
 public class AbilityCardView : MonoBehaviour
 {
     [SerializeField] Text _nameTextUI = null;

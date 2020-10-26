@@ -7,9 +7,10 @@ public class UIManager : MonoBehaviour
 {
     // TODO this is a major mess, pffload these into individual scripts on each menu panel that derive from an abstract class
 
-    [SerializeField] DeckTester _deckTester = null;
     [SerializeField] PlayerController _player = null;
-    [SerializeField] Text _energyText = null;
+    [SerializeField] Text _actionText = null;
+    [SerializeField] Text _healthText = null;
+    [SerializeField] Text _defenseText = null;
     [SerializeField] Text _enemyThinkingTextUI = null;
 
     [SerializeField] GameObject _menuPanel = null;
@@ -35,6 +36,7 @@ public class UIManager : MonoBehaviour
         MenuCardGameState.EnteredMenu += ShowMenu;
         MenuCardGameState.ExitedMenu += HideMenu;
         SetupCardGameState.StartedSetup += ShowSetupGraphics;
+        SetupCardGameState.StartedSetup += HideMainPanel;
         SetupCardGameState.EndedSetup += HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep += ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep += HideBoostStep;
@@ -50,7 +52,9 @@ public class UIManager : MonoBehaviour
         _player.CurrentMainDeck += DisplayMainDeck;
         _player.CurrentDiscard += DisplayDiscardPile;
         _player.CurrentBoostDeck += DisplayBoostDeck;
-        _player.EnergyChanged += UpdateEnergyDisplay;
+        _player.ActionsChanged += UpdateActionsDisplay;
+        _player.HealthSet += UpdateHealthDisplay;
+        _player.DefenseChanged += UpdateDefenseDisplay;
     }
 
     private void OnDisable()
@@ -58,6 +62,7 @@ public class UIManager : MonoBehaviour
         MenuCardGameState.EnteredMenu -= ShowMenu;
         MenuCardGameState.ExitedMenu -= HideMenu;
         SetupCardGameState.StartedSetup -= ShowSetupGraphics;
+        SetupCardGameState.StartedSetup -= HideMainPanel;
         SetupCardGameState.EndedSetup -= HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep -= ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep -= HideBoostStep;
@@ -73,7 +78,9 @@ public class UIManager : MonoBehaviour
         _player.CurrentMainDeck -= DisplayMainDeck;
         _player.CurrentDiscard -= DisplayDiscardPile;
         _player.CurrentBoostDeck -= DisplayBoostDeck;
-        _player.EnergyChanged -= UpdateEnergyDisplay;
+        _player.ActionsChanged -= UpdateActionsDisplay;
+        _player.HealthSet -= UpdateHealthDisplay;
+        _player.DefenseChanged -= UpdateDefenseDisplay;
     }
 
     private void Awake()
@@ -82,11 +89,6 @@ public class UIManager : MonoBehaviour
         _discardDeckView = _discardDeckPanel.GetComponent<IDeckView<AbilityCard>>();
         _mainDeckView = _mainDeckPanel.GetComponent<IDeckView<AbilityCard>>();
         _boostDeckView = _boostDeckPanel.GetComponent<IDeckView<BoostCard>>();
-    }
-
-    private void Start()
-    {
-        UpdateEnergyDisplay(_player.PlayerEnergy);
     }
 
     private void DisplayPlayerHand(Deck<AbilityCard> deck)
@@ -109,9 +111,23 @@ public class UIManager : MonoBehaviour
         _boostDeckView.ShowDeck(deck);
     }
 
-    private void UpdateEnergyDisplay(int currentEnergy)
+    private void UpdateActionsDisplay(int currentActions)
     {
-        _energyText.text = "Energy: " + currentEnergy;
+        
+        Debug.Log("Current Actions: " + currentActions);
+        _actionText.text = "Actions: " + currentActions;
+    }
+
+    private void UpdateDefenseDisplay(float currentDefense)
+    {
+        Debug.Log("Updating Defense");
+        _defenseText.text = "Defense: " + currentDefense + "%";
+    }
+
+    private void UpdateHealthDisplay(int currentHealth)
+    {
+        Debug.Log("Updating Health");
+        _healthText.text = "Health: " + currentHealth;
     }
 
     private void ShowMenu()

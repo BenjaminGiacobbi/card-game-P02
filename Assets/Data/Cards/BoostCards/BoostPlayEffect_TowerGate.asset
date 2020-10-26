@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eebc151473140d64bb417e03a016c9da, type: 3}
   m_Name: BoostPlayEffect_TowerGate
   m_EditorClassIdentifier: 
-  _boostType: 2
+  _boostType: 1
   _boostValue: 0.2
