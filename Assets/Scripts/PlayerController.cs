@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     public event Action<Deck<AbilityCard>> CurrentDiscard = delegate { };
     public event Action<Deck<AbilityCard>> CurrentMainDeck = delegate { };
     public event Action<Deck<BoostCard>> CurrentBoostDeck = delegate { };
+    public event Action<AbilityCard> SelectedAbilityCard = delegate { };
+    public event Action EndedSelection = delegate { };
     public event Action GameOver = delegate { };
     public event Action ActionEnd = delegate { };
     public event Action<int> ActionsChanged = delegate { };
@@ -27,6 +29,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     [SerializeField] int _playerActions = 1;
     [SerializeField] int _maxPlayerHealth = 30;
     private int _currentHealth;
+
+    Coroutine _selectionRoutine = null;
 
     public int MaxHandSize
     { get { return _maxHandSize; } private set { _maxHandSize = value; } }
@@ -51,8 +55,10 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     }
     */
 
+    /*
     public int MaxPlayerHealth
     { get { return _maxPlayerHealth; } private set { _maxPlayerHealth = value; } }
+    */
 
     public int CurrentHealth
     {
@@ -62,8 +68,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
         }
         private set
         {
-            if (value > MaxPlayerHealth)
-                _currentHealth = _maxPlayerHealth;
+            if (value < 0)
+                _currentHealth = 0;
             else
                 _currentHealth = value;
         }
@@ -88,12 +94,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
         }
     }
     */
-
-    private void Start()
-    {
-        CurrentHealth = MaxPlayerHealth;
-        HealthSet?.Invoke(CurrentHealth);
-    }
 
     public void SetupAbilityDeck(List<AbilityCardData> abilityDeckConfig)
     {
@@ -127,7 +127,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
             AbilityCard newCard = _abilityDeck.Draw(DeckPosition.Top);
             if (newCard != null)
             {
-                Debug.Log("Drew card: " + newCard.Name);
                 _playerHand.Add(newCard, DeckPosition.Top);
 
                 CurrentHand?.Invoke(_playerHand);
@@ -142,7 +141,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
         {
             Debug.Log("Cannot draw more than " + MaxHandSize + " cards!");
         }
-
     }
 
     public void PlayAbilityCard(int index)
@@ -150,26 +148,18 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
         AbilityCard targetCard = _playerHand.GetCard(index);
         if (targetCard != null && PlayerActions > 0)
         {
-            PlayerActions--;
-            Debug.Log("Actions remaining: " + PlayerActions);
-            ActionsChanged?.Invoke(PlayerActions);
-            targetCard.Play();
-            // TODO expand remove to accept a deck position
-            _playerHand.Remove(index);
-            _abilityDiscard.Add(targetCard);
-            CurrentDiscard?.Invoke(_abilityDiscard);
-            CurrentHand?.Invoke(_playerHand);
-            Debug.Log("Card added to Discard: " + targetCard.Name);
+            if (_selectionRoutine == null) 
+                _selectionRoutine = StartCoroutine(SelectionRaycast(targetCard, index));
         }
     }
 
     public void PlayTopBoostCard()
     {
+        Debug.Log("Playing boost Card");
         BoostCard targetCard = _boostDeck.TopItem;
         if (targetCard != null && PlayerActions > 0)
         {
             PlayerActions--;
-            Debug.Log("Playing Boost Card: " + targetCard.Name);
             ActionsChanged?.Invoke(PlayerActions);
             targetCard.Play();
 
@@ -177,11 +167,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
             if (targetCard.Uses == 0)
             {
                 _boostDeck.Remove(_boostDeck.LastIndex);
-                return;
             }
             else
+            {
                 _boostDeck.Remove(_boostDeck.LastIndex);
                 _boostDeck.Add(targetCard, DeckPosition.Bottom);
+            } 
             CurrentBoostDeck?.Invoke(_boostDeck);
         }
     }
@@ -253,5 +244,45 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     {
         _playerActions += value;
         ActionsChanged?.Invoke(PlayerActions);
+    }
+
+    // TODO I don't think it's best that this goes here, but I don't know a better way to organize it yet
+    IEnumerator SelectionRaycast(AbilityCard card, int index)
+    {
+        SelectedAbilityCard?.Invoke(card);
+        yield return new WaitForEndOfFrame();
+        while(true)
+        {
+            if(Input.GetMouseButtonDown(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if(Physics.Raycast(ray, out RaycastHit _hitInfo, Mathf.Infinity))
+                {
+                    BoardSpace space = _hitInfo.collider.GetComponent<BoardSpace>();
+                    if (space != null)
+                    {
+                        space.SetCard(card);
+                        PlayerActions--;
+                        ActionsChanged?.Invoke(PlayerActions);
+                        card.Play();
+                        _playerHand.Remove(index);
+                        _abilityDiscard.Add(card);
+                        EndedSelection?.Invoke();
+                        CurrentDiscard?.Invoke(_abilityDiscard);
+                        CurrentHand?.Invoke(_playerHand);
+                        _selectionRoutine = null;
+                        yield break;
+                    }
+                }
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                EndedSelection?.Invoke();
+                _selectionRoutine = null;
+                yield break;
+            }
+
+            yield return null;
+        }
     }
 }

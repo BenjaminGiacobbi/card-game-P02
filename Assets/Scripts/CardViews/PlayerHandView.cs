@@ -52,7 +52,7 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
     }
 
     
-    private void ClearList()
+    public void ClearList()
     {
         if(_handItems.Length > 0)
         {

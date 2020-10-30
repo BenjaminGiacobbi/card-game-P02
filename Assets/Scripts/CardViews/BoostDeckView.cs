@@ -12,7 +12,7 @@ public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
         _cardObject = Instantiate(_boostCardPrefab.gameObject, transform);
         _cardObject.transform.SetSiblingIndex(0);
         _cardObject.transform.localPosition = Vector3.zero;
-        _boostCardPrefab.GetComponent<Button>()?.onClick.AddListener(_player.PlayTopBoostCard);
+        _cardObject.GetComponent<Button>()?.onClick.AddListener(_player.PlayTopBoostCard);
         _cardObject.SetActive(false);
         gameObject.SetActive(false);
     }

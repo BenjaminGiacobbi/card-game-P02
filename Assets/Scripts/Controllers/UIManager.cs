@@ -13,6 +13,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] Text _defenseText = null;
     [SerializeField] Text _enemyThinkingTextUI = null;
 
+    [SerializeField] GameObject _testObject = null;
     [SerializeField] GameObject _menuPanel = null;
     [SerializeField] GameObject _setupPanel = null;
     [SerializeField] GameObject _boostPanel = null;
@@ -55,6 +56,8 @@ public class UIManager : MonoBehaviour
         _player.ActionsChanged += UpdateActionsDisplay;
         _player.HealthSet += UpdateHealthDisplay;
         _player.DefenseChanged += UpdateDefenseDisplay;
+        _player.SelectedAbilityCard += ShowSelectedGraphic;
+        _player.EndedSelection += HideSelectedGraphic;
     }
 
     private void OnDisable()
@@ -81,6 +84,8 @@ public class UIManager : MonoBehaviour
         _player.ActionsChanged -= UpdateActionsDisplay;
         _player.HealthSet -= UpdateHealthDisplay;
         _player.DefenseChanged -= UpdateDefenseDisplay;
+        _player.SelectedAbilityCard -= ShowSelectedGraphic;
+        _player.EndedSelection -= HideSelectedGraphic;
     }
 
     private void Awake()
@@ -89,6 +94,22 @@ public class UIManager : MonoBehaviour
         _discardDeckView = _discardDeckPanel.GetComponent<IDeckView<AbilityCard>>();
         _mainDeckView = _mainDeckPanel.GetComponent<IDeckView<AbilityCard>>();
         _boostDeckView = _boostDeckPanel.GetComponent<IDeckView<BoostCard>>();
+    }
+
+    private void Start()
+    {
+        _testObject = Instantiate(_testObject, transform);
+        _testObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        _testObject.transform.SetAsLastSibling();
+        _testObject.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (_testObject.activeSelf == true)
+        {
+            _testObject.transform.position = Input.mousePosition;
+        }
     }
 
     private void DisplayPlayerHand(Deck<AbilityCard> deck)
@@ -199,5 +220,15 @@ public class UIManager : MonoBehaviour
     private void HideLosePanel()
     {
         _losePanel.SetActive(false);
+    }
+
+    private void ShowSelectedGraphic(AbilityCard card)
+    {
+        _testObject.SetActive(true);
+    }
+
+    private void HideSelectedGraphic()
+    {
+        _testObject.SetActive(false);
     }
 }
