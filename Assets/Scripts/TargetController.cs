@@ -7,12 +7,14 @@ public class TargetController : MonoBehaviour
     // TODO built a more structured connection, maybe singleton?
     public static ITargetable CurrentTarget;
     public static PlayerController CurrentPlayer;
+    public static EnemyController CurrentEnemy;
 
     [SerializeField] Creature _objectToTarget = null;
 
     private void Awake()
     {
         CurrentPlayer = FindObjectOfType<PlayerController>();
+        CurrentEnemy = FindObjectOfType<EnemyController>();
     }
 
     // Update is called once per frame
@@ -25,9 +27,20 @@ public class TargetController : MonoBehaviour
             if(possibleTarget != null)
             {
                 Debug.Log("New target acquired!");
-                CurrentTarget = possibleTarget;
+                
                 _objectToTarget.Target();
             }
+        }
+    }
+
+    public static void SetCurrentTarget(GameObject obj)
+    {
+        Debug.Log("Set Current Target as: " + obj.name);
+        ITargetable possibleTarget = obj.GetComponent<ITargetable>();
+        if (possibleTarget != null)
+        {
+            CurrentTarget = possibleTarget;
+            CurrentTarget.Target();
         }
     }
 }

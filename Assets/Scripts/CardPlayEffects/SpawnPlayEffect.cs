@@ -3,22 +3,33 @@
 [CreateAssetMenu(fileName = "NewSpawnPlayEffect", menuName = "CardData/PlayEffects/Spawn")]
 public class SpawnPlayEffect : CardPlayEffect
 {
-    [SerializeField] GameObject _prefabToSpawn = null;
+    [SerializeField] Creature _creatureToSpawn = null;
+    private GameObject _spawnedObject = null;
 
     public override void Activate(ITargetable target)
     {
         // test if target has monobehavior to exist in world
-        MonoBehaviour worldObject = target as MonoBehaviour;
-        if (worldObject != null)
+        BoardSpace space = target as BoardSpace;
+        if (space != null)
         {
-            Vector3 spawnLocation = worldObject.transform.position;
-            GameObject newGameObject = Instantiate
-                (_prefabToSpawn, spawnLocation, Quaternion.identity);
-            Debug.Log("Spawn new Object: " + newGameObject.name);
+            GameObject newCreature = Instantiate
+                (_creatureToSpawn.gameObject, space.SpawnLocation.position, Quaternion.identity);
+            newCreature.transform.parent = space.transform;
+            space.Creature = newCreature.GetComponent<Creature>();
+            Debug.Log("Spawn new Object: " + space.name);
         }
         else
         {
-            Debug.Log("Target does not have a transform.");
+            Debug.Log("Target is not a board space.");
         }
+    }
+
+    public Creature GetCreature()
+    {
+        Creature instantiatedCreature = _spawnedObject.GetComponent<Creature>();
+        if(instantiatedCreature != null)
+            return _spawnedObject.GetComponent<Creature>();
+        else
+            return null;
     }
 }

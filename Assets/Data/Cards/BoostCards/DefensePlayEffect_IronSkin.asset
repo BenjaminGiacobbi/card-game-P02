@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eebc151473140d64bb417e03a016c9da, type: 3}
-  m_Name: BoostPlayEffect_MagicMedicine
+  m_Script: {fileID: 11500000, guid: 4c3f32bdc69a16e49b4097b0d45f441b, type: 3}
+  m_Name: DefensePlayEffect_IronSkin
   m_EditorClassIdentifier: 
-  _boostType: 0
-  _boostValue: 50
+  _damageModifier: 0.6

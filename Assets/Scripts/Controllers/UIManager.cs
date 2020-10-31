@@ -135,19 +135,16 @@ public class UIManager : MonoBehaviour
     private void UpdateActionsDisplay(int currentActions)
     {
         
-        Debug.Log("Current Actions: " + currentActions);
         _actionText.text = "Actions: " + currentActions;
     }
 
     private void UpdateDefenseDisplay(float currentDefense)
     {
-        Debug.Log("Updating Defense");
         _defenseText.text = "Defense: " + currentDefense + "%";
     }
 
     private void UpdateHealthDisplay(int currentHealth)
     {
-        Debug.Log("Updating Health");
         _healthText.text = "Health: " + currentHealth;
     }
 

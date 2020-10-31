@@ -15,4 +15,4 @@ MonoBehaviour:
   _name: Industrialize
   _uses: 1
   _graphic: {fileID: 21300000, guid: 972d953e734d0f64f98a7482110cd3b3, type: 3}
-  _playEffect: {fileID: 11400000, guid: ffcdbb54451f9754e96db5eaa657ea01, type: 2}
+  _playEffect: {fileID: 11400000, guid: b36b7137a205ec5488cc39b1ce02d7f0, type: 2}

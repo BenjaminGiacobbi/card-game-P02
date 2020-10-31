@@ -9,8 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eebc151473140d64bb417e03a016c9da, type: 3}
-  m_Name: BoostPlayEffect_AreaControl
+  m_Script: {fileID: 11500000, guid: 87ecaac0d89892341a9484bb98b2b81b, type: 3}
+  m_Name: ActionPlayEffect_Motivation
   m_EditorClassIdentifier: 
-  _boostType: 2
-  _boostValue: 2
+  _actionValue: 2

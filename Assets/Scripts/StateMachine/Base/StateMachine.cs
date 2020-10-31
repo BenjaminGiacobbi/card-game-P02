@@ -57,7 +57,7 @@ public abstract class StateMachine : MonoBehaviour
         // simulates update on held state with tick
         // technically this isn't necessary if the states are monobehaviors,
         // but they may not always be
-        if(CurrentState != null && !InTransition)
+        if (CurrentState != null && !InTransition)
         {
             CurrentState.Tick();
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class PlayerController : MonoBehaviour, IDamageable, ITargetable
+public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoostable
 {
     public event Action<Deck<AbilityCard>> CurrentHand = delegate { };
     public event Action<Deck<AbilityCard>> CurrentDiscard = delegate { };
@@ -95,6 +95,12 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     }
     */
 
+    private void Start()
+    {
+        CurrentHealth = _maxPlayerHealth;
+        HealthSet?.Invoke(CurrentHealth);
+    }
+
     public void SetupAbilityDeck(List<AbilityCardData> abilityDeckConfig)
     {
         foreach (AbilityCardData abilityData in abilityDeckConfig)
@@ -155,7 +161,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
 
     public void PlayTopBoostCard()
     {
-        Debug.Log("Playing boost Card");
         BoostCard targetCard = _boostDeck.TopItem;
         if (targetCard != null && PlayerActions > 0)
         {
@@ -211,7 +216,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
 
     public void TakeDamage(int damage)
     {
-        CurrentHealth -= damage;
+        CurrentHealth -= Mathf.CeilToInt(damage * _damageModifier);
         HealthSet?.Invoke(CurrentHealth);
         if( CurrentHealth < 0)
             Kill();
@@ -247,6 +252,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
     }
 
     // TODO I don't think it's best that this goes here, but I don't know a better way to organize it yet
+    // TODO these if checks are kinda disgusting
     IEnumerator SelectionRaycast(AbilityCard card, int index)
     {
         SelectedAbilityCard?.Invoke(card);
@@ -261,10 +267,14 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable
                     BoardSpace space = _hitInfo.collider.GetComponent<BoardSpace>();
                     if (space != null)
                     {
-                        space.SetCard(card);
+                        if (!space.UseCard(card))
+                        {
+                            EndedSelection?.Invoke();
+                            _selectionRoutine = null;
+                            yield break;
+                        } 
                         PlayerActions--;
                         ActionsChanged?.Invoke(PlayerActions);
-                        card.Play();
                         _playerHand.Remove(index);
                         _abilityDiscard.Add(card);
                         EndedSelection?.Invoke();

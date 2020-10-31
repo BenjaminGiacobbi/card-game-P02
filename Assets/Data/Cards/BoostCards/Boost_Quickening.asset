@@ -15,4 +15,4 @@ MonoBehaviour:
   _name: Quickening
   _uses: 2
   _graphic: {fileID: 21300000, guid: 1f6e5b12c5db77c46ac9d432b928b2b8, type: 3}
-  _playEffect: {fileID: 11400000, guid: 3929a6d7898d60842a9b364f34b54055, type: 2}
+  _playEffect: {fileID: 11400000, guid: 7428d9efcc877024d9550ea2fd0f4507, type: 2}

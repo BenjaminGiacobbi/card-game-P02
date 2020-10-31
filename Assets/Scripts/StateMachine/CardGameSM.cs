@@ -13,9 +13,4 @@ public class CardGameSM : StateMachine
         // NOTE: this allows any states, not just CardGameStates, do change
         ChangeState<MenuCardGameState>();
     }
-
-    private void Update()
-    {
-            
-    }
 }
