@@ -50,6 +50,7 @@ public class EnemyController : MonoBehaviour, ITargetable, IDamageable, IBoostab
     public void TakeDamage(int damage)
     {
         CurrentHealth -= Mathf.CeilToInt(damage * 1);   // hardcoded, add damage modifier later
+        Debug.Log(CurrentHealth);
         _hpSlider.value = CurrentHealth;
         _hpText.text = "Enemy HP: " + CurrentHealth;
         if (CurrentHealth < 0)

@@ -53,29 +53,27 @@ public class PlayBoard : MonoBehaviour
                 if(predictPlayerHP > 0 || (predictPlayerHP <= 0 && predictEnemyHP <= 0))
                 {
                     CurrentTarget = pair.Enemy.Creature.GetComponent<ITargetable>();
-                    AttackActions(pair.Player.Creature);
+                    pair.Player.Creature.ApplyDamage(CurrentTarget);
                 }
                 if(predictPlayerHP <= 0 || (predictPlayerHP > 0 && predictEnemyHP > 0))
                 {
                     CurrentTarget = pair.Player.Creature.GetComponent<ITargetable>();
-                    AttackActions(pair.Enemy.Creature);
+                    pair.Enemy.Creature.ApplyDamage(CurrentTarget);
                 }
-                Debug.Log(pair.Player.Creature);
-                Debug.Log(pair.Enemy.Creature);
             }
 
             // when player slot only is filled
             else if (pair.Player.Creature && !pair.Enemy.Creature)
             { 
                 SetTargetToEnemy();
-                AttackActions(pair.Player.Creature);
+                pair.Player.Creature.ApplyDamage(CurrentTarget);
             }
 
             // when enemy slot only is filled
             else if (!pair.Player.Creature && pair.Enemy.Creature)
             {
                 SetTargetToPlayer();
-                AttackActions(pair.Enemy.Creature);
+                pair.Enemy.Creature.ApplyDamage(CurrentTarget);
             }
         }
     }
@@ -99,14 +97,6 @@ public class PlayBoard : MonoBehaviour
     public void SetTargetToEnemy()
     {
         CurrentTarget = CurrentEnemy.GetComponent<ITargetable>();
-    }
-
-    private void AttackActions(Creature creature)
-    {
-        for (int i = 0; i < creature.CurrentActions; i++)
-        {
-            creature.ApplyDamage(CurrentTarget);
-        }
     }
 }
 
