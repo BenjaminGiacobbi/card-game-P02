@@ -15,6 +15,7 @@ public class SpawnPlayEffect : CardPlayEffect
             GameObject newCreature = Instantiate
                 (_creatureToSpawn.gameObject, space.SpawnLocation.position, Quaternion.identity);
             newCreature.transform.parent = space.transform;
+            newCreature.transform.localRotation = Quaternion.Euler(newCreature.transform.localRotation.x, 0, newCreature.transform.localRotation.z);
             space.Creature = newCreature.GetComponent<Creature>();
             Debug.Log("Spawn new Object: " + space.name);
         }
@@ -24,6 +25,7 @@ public class SpawnPlayEffect : CardPlayEffect
         }
     }
 
+    /*
     public Creature GetCreature()
     {
         Creature instantiatedCreature = _spawnedObject.GetComponent<Creature>();
@@ -32,4 +34,5 @@ public class SpawnPlayEffect : CardPlayEffect
         else
             return null;
     }
+    */
 }

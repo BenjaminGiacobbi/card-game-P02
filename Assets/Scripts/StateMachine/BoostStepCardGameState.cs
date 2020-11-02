@@ -21,7 +21,7 @@ public class BoostStepCardGameState : CardGameState
 
     public override void Enter()
     {
-        _useBoostButton.onClick.AddListener(PlayBoostCard);
+        _useBoostButton.onClick.AddListener(Boost);
         _skipBoostButton.onClick.AddListener(ToPlayerTurn);
         _useBoostButton.gameObject.SetActive(true);
         _board.SetTargetToPlayer();
@@ -35,17 +35,17 @@ public class BoostStepCardGameState : CardGameState
     public override void Exit()
     {
         Debug.Log("Boost: Exiting...");
-        _useBoostButton.onClick.RemoveListener(PlayBoostCard);
+        _useBoostButton.onClick.RemoveListener(Boost);
         _skipBoostButton.onClick.RemoveListener(ToPlayerTurn);
         EndedBoostStep?.Invoke();
     }
 
-    private void PlayBoostCard()
+    private void Boost()
     {
         counter++;
         // access player controller and tell it to use top boost card/update whatever it needs
         StateMachine.Player.BoostAction(1);     // provides a free action for the boost card
-        StateMachine.Player.PlayTopBoostCard();
+        StateMachine.Player.PlayBoostCard();
         ToPlayerTurn(); // this actually needs to cycle through boost cards automatically
         _board.SetTargetToEnemy();
     }

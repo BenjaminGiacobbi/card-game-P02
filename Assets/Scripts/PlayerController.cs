@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
     public event Action<Deck<AbilityCard>> CurrentMainDeck = delegate { };
     public event Action<Deck<BoostCard>> CurrentBoostDeck = delegate { };
     public event Action<AbilityCard> SelectedAbilityCard = delegate { };
+    public event Action<BoostCard> SelectedBoostCard = delegate { };
     public event Action EndedSelection = delegate { };
-    public event Action GameOver = delegate { };
     public event Action ActionEnd = delegate { };
     public event Action<int> ActionsChanged = delegate { };
     public event Action<int> HealthSet = delegate { };
@@ -27,38 +27,17 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
     [SerializeField] int _startingHandSize = 5;
     [SerializeField] float _damageModifier = 1.0f;
     [SerializeField] int _playerActions = 1;
-    [SerializeField] int _maxPlayerHealth = 30;
+    [SerializeField] int _maxHealth = 30;
     private int _currentHealth;
 
-    Coroutine _selectionRoutine = null;
+    Coroutine _abilityRoutine = null;
+    Coroutine _boostRoutine = null;
 
     public int MaxHandSize
     { get { return _maxHandSize; } private set { _maxHandSize = value; } }
 
     public int PlayerActions
     { get { return _playerActions; } private set { _playerActions = value; } }
-
-    /*
-    public int PlayerActions
-    {
-        get
-        {
-            return _playerActions;
-        }
-        private set
-        {
-            if (value <= 0)
-                _maxHandSize = 0;
-            else
-                _maxHandSize = value;
-        }
-    }
-    */
-
-    /*
-    public int MaxPlayerHealth
-    { get { return _maxPlayerHealth; } private set { _maxPlayerHealth = value; } }
-    */
 
     public int CurrentHealth
     {
@@ -78,27 +57,39 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
     public int CurrentHandSize
     { get { return _startingHandSize; } private set { _startingHandSize = value; } }
 
-    /*
-    public int CurrentHandSize
+    public void SetPlayerDefaults()
     {
-        get
-        {
-            return _startingHandSize;
-        }
-        private set
-        {
-            if (value > MaxHandSize)
-                _startingHandSize = MaxHandSize;
-            else
-                _startingHandSize = value;
-        }
-    }
-    */
-
-    private void Start()
-    {
-        CurrentHealth = _maxPlayerHealth;
+        CurrentHealth = _maxHealth;
         HealthSet?.Invoke(CurrentHealth);
+        ClearDecks();
+    }
+
+    public void ClearDecks()
+    {
+        if (!_abilityDiscard.IsEmpty)
+        {
+            _abilityDiscard.Empty();
+            CurrentDiscard?.Invoke(_abilityDiscard);
+        }
+
+        if (!_abilityDeck.IsEmpty)
+        {
+            _abilityDeck.Empty();
+            CurrentMainDeck?.Invoke(_abilityDeck);
+        }
+    
+        if (!_playerHand.IsEmpty)
+        {
+            _playerHand.Empty();
+            CurrentHand?.Invoke(_playerHand);
+        }
+
+        if (!_boostDeck.IsEmpty)
+        {
+            _boostDeck.Empty();
+            CurrentBoostDeck?.Invoke(_boostDeck);
+        }
+            
     }
 
     public void SetupAbilityDeck(List<AbilityCardData> abilityDeckConfig)
@@ -115,6 +106,9 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
 
     public void SetupBoostDeck(List<BoostCardData> boostDeckConfig)
     {
+        if (_boostDeck.Count > 0)
+            _boostDeck.Empty();
+
         foreach (BoostCardData boostData in boostDeckConfig)
         {
             BoostCard newBoostCard = new BoostCard(boostData);
@@ -152,34 +146,40 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
     public void PlayAbilityCard(int index)
     {
         AbilityCard targetCard = _playerHand.GetCard(index);
-        if (targetCard != null && PlayerActions > 0)
+        if (targetCard != null && PlayerActions > 0 && PlayerActions >= targetCard.Cost)
         {
-            if (_selectionRoutine == null) 
-                _selectionRoutine = StartCoroutine(SelectionRaycast(targetCard, index));
+            if (_abilityRoutine == null) 
+                _abilityRoutine = StartCoroutine(AbilityCardSelection(targetCard, index));
         }
     }
 
-    public void PlayTopBoostCard()
+    public void StartBoostRoutine()
     {
-        BoostCard targetCard = _boostDeck.TopItem;
-        if (targetCard != null && PlayerActions > 0)
+        if (_boostDeck.TopItem != null && PlayerActions > 0)
         {
-            PlayerActions--;
-            ActionsChanged?.Invoke(PlayerActions);
-            targetCard.Play();
-
-            // doesn't maintain boost card if it's out of uses
-            if (targetCard.Uses == 0)
-            {
-                _boostDeck.Remove(_boostDeck.LastIndex);
-            }
-            else
-            {
-                _boostDeck.Remove(_boostDeck.LastIndex);
-                _boostDeck.Add(targetCard, DeckPosition.Bottom);
-            } 
-            CurrentBoostDeck?.Invoke(_boostDeck);
+            if (_boostRoutine == null)
+                _boostRoutine = StartCoroutine(BoostCardSelection());
         }
+    }
+
+    public void PlayBoostCard()
+    {
+        BoostCard lastCard = _boostDeck.TopItem;
+        PlayerActions--;
+        lastCard.Play();
+        // doesn't maintain boost card if it's out of uses
+        if (lastCard.Uses == 0)
+        {
+            _boostDeck.Remove(_boostDeck.LastIndex);
+        }
+        else
+        {
+            _boostDeck.Remove(_boostDeck.LastIndex);
+            _boostDeck.Add(lastCard, DeckPosition.Bottom);
+        }
+        ActionsChanged?.Invoke(PlayerActions);
+        CurrentBoostDeck?.Invoke(_boostDeck);
+        EndedSelection?.Invoke();
     }
 
     // TODO currently this always only iterates to half, rounded up, of the possible iterations in Discard.Count
@@ -188,7 +188,6 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
         // add event for reshuffling discard feedback?
         if (_abilityDiscard.Count > 0)
         {
-            Debug.Log("Reshuffling Discard Pile into Main Deck!");
             int _discardCount = _abilityDiscard.Count;
             for (int i = 0; i < _discardCount; i++)
             {
@@ -225,12 +224,11 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
     public void Kill()
     {
         CurrentHealth = 0;
-        GameOver?.Invoke();
     }
 
     public void Target()
     {
-        // some targeting code, but this would be necesssary for the AI to target
+        // some targeting feedback code, but this would be necesssary for the AI to target
     }
 
     public void BoostHealth(int value)
@@ -253,7 +251,7 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
 
     // TODO I don't think it's best that this goes here, but I don't know a better way to organize it yet
     // TODO these if checks are kinda disgusting
-    IEnumerator SelectionRaycast(AbilityCard card, int index)
+    IEnumerator AbilityCardSelection(AbilityCard card, int index)
     {
         SelectedAbilityCard?.Invoke(card);
         yield return new WaitForEndOfFrame();
@@ -261,38 +259,83 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
         {
             if(Input.GetMouseButtonDown(0))
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if(Physics.Raycast(ray, out RaycastHit _hitInfo, Mathf.Infinity))
+                RaycastHit hit = GetPointerRaycast();
+                BoardSpace space = hit.collider?.GetComponent<BoardSpace>();
+                if (space != null) // && hit.collider.gameObject.layer == LayerMask.NameToLayer("PlayerSpace")
                 {
-                    BoardSpace space = _hitInfo.collider.GetComponent<BoardSpace>();
-                    if (space != null)
+                    if (!space.UseCard(card))
                     {
-                        if (!space.UseCard(card))
-                        {
-                            EndedSelection?.Invoke();
-                            _selectionRoutine = null;
-                            yield break;
-                        } 
-                        PlayerActions--;
-                        ActionsChanged?.Invoke(PlayerActions);
-                        _playerHand.Remove(index);
-                        _abilityDiscard.Add(card);
                         EndedSelection?.Invoke();
-                        CurrentDiscard?.Invoke(_abilityDiscard);
-                        CurrentHand?.Invoke(_playerHand);
-                        _selectionRoutine = null;
+                        _abilityRoutine = null;
                         yield break;
-                    }
+                    } 
+                    PlayerActions -= card.Cost;
+                    _playerHand.Remove(index);
+                    _abilityDiscard.Add(card);
+
+                    ActionsChanged?.Invoke(PlayerActions);
+                    CurrentDiscard?.Invoke(_abilityDiscard);
+                    CurrentHand?.Invoke(_playerHand);
+                    EndedSelection?.Invoke();
+
+                    _abilityRoutine = null;
+                    yield break;
                 }
             }
             else if (Input.GetMouseButtonDown(1))
             {
                 EndedSelection?.Invoke();
-                _selectionRoutine = null;
+                _abilityRoutine = null;
                 yield break;
             }
 
             yield return null;
         }
+    }
+
+    IEnumerator BoostCardSelection()
+    {
+        SelectedBoostCard?.Invoke(_boostDeck.TopItem);
+        yield return new WaitForEndOfFrame();
+        while(true)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                RaycastHit hit = GetPointerRaycast();
+                IBoostable boostable = hit.collider?.GetComponent<IBoostable>();
+                if (boostable != null)
+                {
+                    ITargetable boostTarget = boostable as ITargetable;
+                    PlayBoard.CurrentTarget = boostTarget;
+                    PlayBoostCard();
+
+                    _boostRoutine = null;
+                    yield break;
+                }
+                else if (hit.collider?.gameObject.layer == LayerMask.NameToLayer("PlayerTarget"))
+                {
+                    PlayBoard.CurrentTarget = GetComponent<ITargetable>();
+                    PlayBoostCard();
+
+                    EndedSelection?.Invoke();
+                    _boostRoutine = null;
+                    yield break;
+                }
+            }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                EndedSelection?.Invoke();
+                _boostRoutine = null;
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+    private RaycastHit GetPointerRaycast()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity)) { }
+        return hitInfo;
     }
 }

@@ -12,12 +12,14 @@ public class SetupCardGameState : CardGameState
     [Header("Deck Configurations")]
     [SerializeField] List<AbilityCardData> _abilityDeckConfig = new List<AbilityCardData>();
     [SerializeField] List<BoostCardData> _boostDeckConfig = new List<BoostCardData>();
+    [SerializeField] PlayBoard _board = null;
     [SerializeField] int _startingCardNumber = 10;
     [SerializeField] int _numberOfPlayers = 2;
     [SerializeField] Button _nextButton = null;
 
     public override void Enter()
     {
+        StartedSetup?.Invoke();
         Debug.Log("Setup: ...Entering");
         Debug.Log("Creating " + _numberOfPlayers + " players.");
         Debug.Log("Creating deck with " + _startingCardNumber + " cards.");
@@ -25,12 +27,14 @@ public class SetupCardGameState : CardGameState
         // DONT put ChangeState<> here
 
         // instantiate player and associated decks from... resources? I don't know the best way to load cards
+        _board.ClearBoard();
+        StateMachine.Player.SetPlayerDefaults();
+        StateMachine.Enemy.SetDefaults();
         StateMachine.Player.SetupAbilityDeck(_abilityDeckConfig);
         StateMachine.Player.SetupBoostDeck(_boostDeckConfig);
 
         if (_nextButton != null)
             _nextButton.onClick.AddListener(ToBoostState);
-        StartedSetup?.Invoke();
     }
 
     public override void Tick()

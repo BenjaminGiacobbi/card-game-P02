@@ -14,4 +14,13 @@ public class AbilityCardData : ScriptableObject
 
     [SerializeField] CardPlayEffect _playEffect = null;
     public CardPlayEffect PlayEffect => _playEffect;
+
+    [SerializeField] AbilityType _type;
+    public AbilityType Type => _type;
+}
+
+public enum AbilityType
+{
+    Spawn,
+    Damage
 }

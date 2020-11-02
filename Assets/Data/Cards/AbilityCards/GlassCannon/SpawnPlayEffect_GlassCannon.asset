@@ -9,7 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa74bf534d27f4a40951d9170d415403, type: 3}
-  m_Name: DamagePlayEffect_Knife
+  m_Script: {fileID: 11500000, guid: 79828abb26947d7408051a02ae5a434b, type: 3}
+  m_Name: SpawnPlayEffect_GlassCannon
   m_EditorClassIdentifier: 
-  _damageAmount: 5
+  _creatureToSpawn: {fileID: 5034961036548575487, guid: c27286d02d6941140872fe87cf9cd7a5,
+    type: 3}

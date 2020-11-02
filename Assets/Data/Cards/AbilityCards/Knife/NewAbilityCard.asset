@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 594f698fefa25e14796497a5a850b2da, type: 3}
-  m_Name: Ability_Knife
+  m_Name: NewAbilityCard
   m_EditorClassIdentifier: 
-  _name: Knife
-  _cost: 15
-  _graphic: {fileID: 21300000, guid: 6225614d5a4ba6e4883cb1541415584d, type: 3}
-  _playEffect: {fileID: 11400000, guid: cda3cadd4d651b34b92a3f2a42085839, type: 2}
+  _name: '...'
+  _cost: 1
+  _graphic: {fileID: 0}
+  _playEffect: {fileID: 0}
+  _type: 1

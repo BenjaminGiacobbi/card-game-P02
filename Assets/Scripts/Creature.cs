@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using System;
 
 public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 {
-    [SerializeField] Slider _hpSlider = null;
+    public event Action<int> BaseHealthSet = delegate { };
+    public event Action<int> HealthSet = delegate { };
+    public event Action<int> ActionSet = delegate { };
+    public event Action<float> DefenseSet = delegate { };
 
-    [SerializeField] int _currentHealth = 10;
+    [SerializeField] int _baseHealth = 10;
+    public int BaseHealth { get { return _baseHealth; } private set { _baseHealth = value; } }
+
+    private int _currentHealth = 0;
     public int CurrentHealth
     {
         get
@@ -23,6 +29,8 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
         }
     }
 
+    
+
     [SerializeField] int _currentActions = 1;
     public int CurrentActions
     { get { return _currentActions; } private set { _currentActions = value; } }
@@ -33,26 +41,26 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 
     public float DefenseModifier { get; private set; } = 1.0f;
 
-    public BoardSpace CurrentSpace { get; private set; }
+    // public BoardSpace CurrentSpace { get; private set; }
 
     private void Start()
     {
-        _hpSlider.minValue = 0;
-        _hpSlider.maxValue = CurrentHealth;   // TODO this needs to be more flexible, it's just set rn
-        _hpSlider.value = CurrentHealth;
+        CurrentHealth = BaseHealth;
+        HealthSet?.Invoke(CurrentHealth);
+        ActionSet?.Invoke(CurrentActions);
+        DefenseSet?.Invoke(1.0f / DefenseModifier * 100);
     }
 
     public void Kill()
     {
-        CurrentSpace.Creature = null;
+        // destroy feedback
         Destroy(gameObject);
     }
 
     public void TakeDamage(int damage)
     {
         CurrentHealth -= Mathf.CeilToInt(damage * DefenseModifier);
-        _hpSlider.value = CurrentHealth;
-        _hpSlider.value = CurrentHealth;
+        HealthSet?.Invoke(CurrentHealth);
         if (_currentHealth <= 0)
             Kill();
     }
@@ -61,14 +69,14 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     {
         MonoBehaviour targetObject = target as MonoBehaviour;
         IDamageable damageable = targetObject?.GetComponent<IDamageable>();
-        damageable?.TakeDamage(AttackDamage);
-
-        // play visual/audio feedback
-    }
-
-    public void SetSpace(BoardSpace space)
-    {
-        CurrentSpace = space;
+        if (damageable != null)
+        {
+            for (int i = 0; i < CurrentActions; i++)
+            {
+                damageable.TakeDamage(AttackDamage);
+                // play visual/audio feedback
+            }
+        }
     }
 
     public void Target()
@@ -79,15 +87,18 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     public void BoostHealth(int value)
     {
         CurrentHealth += value;
+        HealthSet?.Invoke(CurrentHealth);
     }
 
     public void BoostAction(int value)
     {
         CurrentActions += value;
+        ActionSet?.Invoke(CurrentActions);
     }
 
     public void BoostDefense(float modifier)
     {
         DefenseModifier = modifier;
+        DefenseSet?.Invoke(1.0f / DefenseModifier * 100);
     }
 }

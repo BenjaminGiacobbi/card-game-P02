@@ -16,26 +16,25 @@ public class TurnResultsCardGameState : CardGameState
 
     public override void Enter()
     {
-        Debug.Log("Results: ...Entering");
-        StateMachine.Player.GameOver += ProceedToLose;
-        // hook up enemy HP to proceed to win
-        Debug.Log("Battle Enemies");
         board.BattleEnemies();
-        Debug.Log("Set Timer");
         timer = 5;
     }
 
     public override void Tick()
     {
-        Debug.Log("Tick");
         if(timer > 0)
         { 
             timer -= Time.deltaTime;
-            Debug.Log("Timer: " + timer);
             if (timer <= 0)
             {
                 timer = 0;
-                StateMachine.ChangeState<BoostStepCardGameState>();
+
+                if (StateMachine.Player.CurrentHealth <= 0)
+                    StateMachine.ChangeState<PlayerLoseCardGameState>();
+                else if (StateMachine.Enemy.CurrentHealth <= 0)
+                    StateMachine.ChangeState<PlayerWinCardGameState>();
+                else
+                    StateMachine.ChangeState<BoostStepCardGameState>();
             }   
         }
     }
@@ -43,16 +42,5 @@ public class TurnResultsCardGameState : CardGameState
     public override void Exit()
     {
         Debug.Log("Setup: Exiting...");
-        StateMachine.Player.GameOver -= ProceedToLose;
-    }
-
-    void ProceedToWin()
-    {
-        StateMachine.ChangeState<PlayerWinCardGameState>();
-    }
-
-    void ProceedToLose()
-    {
-        StateMachine.ChangeState<PlayerLoseCardGameState>();
     }
 }

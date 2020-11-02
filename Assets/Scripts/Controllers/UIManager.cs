@@ -57,6 +57,7 @@ public class UIManager : MonoBehaviour
         _player.HealthSet += UpdateHealthDisplay;
         _player.DefenseChanged += UpdateDefenseDisplay;
         _player.SelectedAbilityCard += ShowSelectedGraphic;
+        _player.SelectedBoostCard += ShowSelectedGraphic;
         _player.EndedSelection += HideSelectedGraphic;
     }
 
@@ -85,6 +86,7 @@ public class UIManager : MonoBehaviour
         _player.HealthSet -= UpdateHealthDisplay;
         _player.DefenseChanged -= UpdateDefenseDisplay;
         _player.SelectedAbilityCard -= ShowSelectedGraphic;
+        _player.SelectedBoostCard -= ShowSelectedGraphic;
         _player.EndedSelection -= HideSelectedGraphic;
     }
 
@@ -219,8 +221,9 @@ public class UIManager : MonoBehaviour
         _losePanel.SetActive(false);
     }
 
-    private void ShowSelectedGraphic(AbilityCard card)
+    private void ShowSelectedGraphic(Card selectedCard)
     {
+        // TODO add paths here to activate a boostCardView or an abilityCardView based on card type
         _testObject.SetActive(true);
     }
 

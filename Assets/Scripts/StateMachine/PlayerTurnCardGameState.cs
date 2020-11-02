@@ -23,7 +23,6 @@ public class PlayerTurnCardGameState : CardGameState
         _playerTurnCount++;
         _playerTurnTextUI.text = "Player Turn: " + _playerTurnCount;
 
-        StateMachine.Player.GameOver += ProceedToLose;
         _nextButton.onClick.AddListener(OnPressedConfirm);
         _winButton.onClick.AddListener(ProceedToWin);
         _loseButton.onClick.AddListener(ProceedToLose);
@@ -35,7 +34,6 @@ public class PlayerTurnCardGameState : CardGameState
         _playerTurnTextUI.gameObject.SetActive(false);
         Debug.Log("Player Turn: Exiting...");
         _nextButton.onClick.RemoveAllListeners();
-        StateMachine.Player.GameOver -= ProceedToLose;
         EndedPlayerTurn?.Invoke();
     }
 

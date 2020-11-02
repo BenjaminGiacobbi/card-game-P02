@@ -18,11 +18,13 @@ public class PlayBoard : MonoBehaviour
 
     SpacePair[] _pairsList = new SpacePair[3];
 
+
     private void Awake()
     {
         CurrentPlayer = FindObjectOfType<PlayerController>();
         CurrentEnemy = FindObjectOfType<EnemyController>();
     }
+
 
     // this could be made more modular in the future
     private void Start()
@@ -32,26 +34,35 @@ public class PlayBoard : MonoBehaviour
         _pairsList[2] = new SpacePair(_playerSpace2, _enemySpace2);
     }
 
+
+    // TODO add delays and visuals for each battle, calling upon the space/creature's own methods
     public void BattleEnemies()
     {
-        Debug.Log("Battling");
         foreach(SpacePair pair in _pairsList)
         {
             // damage matchups when opposing slots are filled
             if (pair.PlayerSpace.Creature && pair.EnemySpace.Creature)
             {
                 // prioritizes the presumed winning opponent, otherwise if both survive, the player goes first
-                int predictPlayerHP = pair.PlayerSpace.Creature.CurrentHealth - pair.EnemySpace.Creature.AttackDamage;
-                int predictEnemyHP = pair.EnemySpace.Creature.CurrentHealth - pair.PlayerSpace.Creature.AttackDamage;
+                // TODO increase complexity so attacks actually happen in sequence rather than all at once, as of now Actions is just damage boosts
+                int predictPlayerHP = pair.PlayerSpace.Creature.CurrentHealth - 
+                    pair.EnemySpace.Creature.AttackDamage * pair.EnemySpace.Creature.CurrentActions;
+                int predictEnemyHP = pair.EnemySpace.Creature.CurrentHealth - 
+                    pair.PlayerSpace.Creature.AttackDamage * pair.PlayerSpace.Creature.CurrentActions;
 
                 if(predictPlayerHP > 0)
                 {
                     CurrentTarget = pair.EnemySpace.Creature.GetComponent<ITargetable>();
                     pair.PlayerSpace.Creature.ApplyDamage(CurrentTarget);
                 }
-                if(predictPlayerHP == 0 || (predictPlayerHP > 0 && predictEnemyHP > 0))
+                else if(predictPlayerHP == 0)
                 {
                     CurrentTarget = pair.PlayerSpace.Creature.GetComponent<ITargetable>();
+                    pair.EnemySpace.Creature.ApplyDamage(CurrentTarget);
+                }
+                else if (predictPlayerHP > 0 && predictEnemyHP > 0)
+                {
+                    pair.PlayerSpace.Creature.ApplyDamage(CurrentTarget);
                     pair.EnemySpace.Creature.ApplyDamage(CurrentTarget);
                 }
             }
@@ -59,7 +70,6 @@ public class PlayBoard : MonoBehaviour
             // when player slot only is filled
             else if (pair.PlayerSpace.Creature && !pair.EnemySpace.Creature)
             {
-                Debug.Log("Only Player");
                 SetTargetToEnemy();
                 pair.PlayerSpace.Creature.ApplyDamage(CurrentTarget);
             }
@@ -67,18 +77,27 @@ public class PlayBoard : MonoBehaviour
             // when enemy slot only is filled
             else if (!pair.PlayerSpace.Creature && pair.EnemySpace.Creature)
             {
-                Debug.Log("Only Enemy");
                 SetTargetToPlayer();
                 pair.EnemySpace.Creature.ApplyDamage(CurrentTarget);
             }
         }
-        Debug.Log("Finished battling");
     }
+
+    public void ClearBoard()
+    {
+        foreach (SpacePair pair in _pairsList)
+        {
+            pair.PlayerSpace.ResetCreatureState();
+            pair.EnemySpace.ResetCreatureState();
+        }
+    }
+
 
     public void SetTargetToPlayer()
     {
         CurrentTarget = CurrentPlayer.GetComponent<ITargetable>();
     }
+
 
     public void SetTargetToEnemy()
     {

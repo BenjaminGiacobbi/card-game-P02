@@ -6,6 +6,8 @@ public class CardGameSM : StateMachine
     public InputController Input => _input;
     [SerializeField] PlayerController _player = null;
     public PlayerController Player => _player;
+    [SerializeField] EnemyController _enemy = null;
+    public EnemyController Enemy => _enemy;
 
     void Start()
     {

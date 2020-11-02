@@ -9,7 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90cdd5170f31898429226c8284895133, type: 3}
-  m_Name: HealPlayEffect_Bandage
+  m_Script: {fileID: 11500000, guid: 594f698fefa25e14796497a5a850b2da, type: 3}
+  m_Name: NewAbilityCard
   m_EditorClassIdentifier: 
-  _healValue: 10
+  _name: '...'
+  _cost: 1
+  _graphic: {fileID: 0}
+  _playEffect: {fileID: 0}
+  _type: 1

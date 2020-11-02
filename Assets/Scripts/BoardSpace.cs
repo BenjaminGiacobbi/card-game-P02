@@ -6,14 +6,8 @@ using UnityEngine.UI;
 public class BoardSpace : MonoBehaviour, ITargetable
 {
     [SerializeField] Transform _spawnLocation = null;
-    [SerializeField] Text _cardText = null;
     public Transform SpawnLocation { get { return _spawnLocation; } private set { _spawnLocation = value; } }
     public Creature Creature { get; set; } = null;
-
-    private void Start()
-    {
-        _cardText.text = "";
-    }
 
     public bool UseCard(AbilityCard card)
     {
@@ -32,7 +26,21 @@ public class BoardSpace : MonoBehaviour, ITargetable
             return true;
         }
         else
-            return false;
+        {
+            if (!Creature)
+            {
+                return false;
+            }
+            PlayBoard.CurrentTarget = Creature.gameObject.GetComponent<ITargetable>();
+            card.Play();
+            return true;
+        }
+    }
+
+    public void ResetCreatureState()
+    {
+        if (Creature != null)
+            Creature.Kill();
     }
 
     public void Target()
