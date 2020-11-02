@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TurnResultsCardGameState : CardGameState
 {
-    [SerializeField] PlayBoard board = null;
+    [SerializeField] PlayBoard _board = null;
+    [SerializeField] float _waitTime = 4f;
+    [SerializeField] Text _resultsText = null;
     private float timer = 0;
     // receives input from the board's command invoker?
 
@@ -14,10 +17,17 @@ public class TurnResultsCardGameState : CardGameState
 
     // short delay() between calling command execute
 
+    private void Start()
+    {
+        _resultsText.gameObject.SetActive(false);
+    }
+
     public override void Enter()
     {
-        board.BattleEnemies();
-        timer = 5;
+        _board.BattleEnemies();
+        _resultsText.text = "Results...";
+        _resultsText.gameObject.SetActive(true);
+        timer = _waitTime;
     }
 
     public override void Tick()
@@ -41,6 +51,7 @@ public class TurnResultsCardGameState : CardGameState
 
     public override void Exit()
     {
+        _resultsText.gameObject.SetActive(false);
         Debug.Log("Setup: Exiting...");
     }
 }

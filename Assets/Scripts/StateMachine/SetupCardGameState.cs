@@ -13,20 +13,14 @@ public class SetupCardGameState : CardGameState
     [SerializeField] List<AbilityCardData> _abilityDeckConfig = new List<AbilityCardData>();
     [SerializeField] List<BoostCardData> _boostDeckConfig = new List<BoostCardData>();
     [SerializeField] PlayBoard _board = null;
-    [SerializeField] int _startingCardNumber = 10;
-    [SerializeField] int _numberOfPlayers = 2;
     [SerializeField] Button _nextButton = null;
 
     public override void Enter()
     {
         StartedSetup?.Invoke();
-        Debug.Log("Setup: ...Entering");
-        Debug.Log("Creating " + _numberOfPlayers + " players.");
-        Debug.Log("Creating deck with " + _startingCardNumber + " cards.");
         // CANT change state while still in Enter/Exit
         // DONT put ChangeState<> here
-
-        // instantiate player and associated decks from... resources? I don't know the best way to load cards
+        Debug.Log("Setup: Entering...");
         _board.ClearBoard();
         StateMachine.Player.SetPlayerDefaults();
         StateMachine.Enemy.SetDefaults();

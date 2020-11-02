@@ -11,7 +11,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] Text _actionText = null;
     [SerializeField] Text _healthText = null;
     [SerializeField] Text _defenseText = null;
-    [SerializeField] Text _enemyThinkingTextUI = null;
+    [SerializeField] Text _enemyThinkingText = null;
+    [SerializeField] Text _playerTurnText = null;
 
     [SerializeField] GameObject _testObject = null;
     [SerializeField] GameObject _menuPanel = null;
@@ -32,16 +33,20 @@ public class UIManager : MonoBehaviour
     IDeckView<AbilityCard> _mainDeckView = null;
     IDeckView<BoostCard> _boostDeckView = null;
 
+    int _playerTurnCount = 0;
+
     private void OnEnable()
     {
         MenuCardGameState.EnteredMenu += ShowMenu;
         MenuCardGameState.ExitedMenu += HideMenu;
         SetupCardGameState.StartedSetup += ShowSetupGraphics;
+        SetupCardGameState.StartedSetup -= ResetTurnDisplay;
         SetupCardGameState.StartedSetup += HideMainPanel;
         SetupCardGameState.EndedSetup += HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep += ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep += HideBoostStep;
         PlayerTurnCardGameState.StartedPlayerTurn += ShowMainPanel;
+        PlayerTurnCardGameState.StartedPlayerTurn += UpdateTurnDisplay;
         PlayerTurnCardGameState.EndedPlayerTurn += HideMainPanel;
         EnemyTurnCardGameState.EnemyTurnBegan += OnEnemyTurnBegan;
         EnemyTurnCardGameState.EnemyTurnEnded += OnEnemyTurnEnded;
@@ -66,11 +71,13 @@ public class UIManager : MonoBehaviour
         MenuCardGameState.EnteredMenu -= ShowMenu;
         MenuCardGameState.ExitedMenu -= HideMenu;
         SetupCardGameState.StartedSetup -= ShowSetupGraphics;
+        SetupCardGameState.StartedSetup -= ResetTurnDisplay;
         SetupCardGameState.StartedSetup -= HideMainPanel;
         SetupCardGameState.EndedSetup -= HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep -= ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep -= HideBoostStep;
         PlayerTurnCardGameState.StartedPlayerTurn -= ShowMainPanel;
+        PlayerTurnCardGameState.StartedPlayerTurn += UpdateTurnDisplay;
         PlayerTurnCardGameState.EndedPlayerTurn -= HideMainPanel;
         EnemyTurnCardGameState.EnemyTurnBegan -= OnEnemyTurnBegan;
         EnemyTurnCardGameState.EnemyTurnEnded -= OnEnemyTurnEnded;
@@ -104,6 +111,7 @@ public class UIManager : MonoBehaviour
         _testObject.layer = LayerMask.NameToLayer("Ignore Raycast");
         _testObject.transform.SetAsLastSibling();
         _testObject.SetActive(false);
+        _playerTurnText.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -112,6 +120,17 @@ public class UIManager : MonoBehaviour
         {
             _testObject.transform.position = Input.mousePosition;
         }
+    }
+
+    private void ResetTurnDisplay()
+    {
+        _playerTurnText.text = "Player Turn: 0";
+    }
+
+    private void UpdateTurnDisplay()
+    {
+        _playerTurnCount++;
+        _playerTurnText.text = "Player Turn : " + _playerTurnCount;
     }
 
     private void DisplayPlayerHand(Deck<AbilityCard> deck)
@@ -184,21 +203,23 @@ public class UIManager : MonoBehaviour
     private void ShowMainPanel()
     {
         _mainPlayerPanel.SetActive(true);
+        _playerTurnText.gameObject.SetActive(true);
     }
 
     private void HideMainPanel()
     {
         _mainPlayerPanel.SetActive(false);
+        _playerTurnText.gameObject.SetActive(false);
     }
 
     private void OnEnemyTurnBegan()
     {
-        _enemyThinkingTextUI.gameObject.SetActive(true);
+        _enemyThinkingText.gameObject.SetActive(true);
     }
 
     private void OnEnemyTurnEnded()
     {
-        _enemyThinkingTextUI.gameObject.SetActive(false);
+        _enemyThinkingText.gameObject.SetActive(false);
     }
 
     private void ShowWinPanel()

@@ -132,9 +132,10 @@ public class Deck<T> where T : Card // called a constraint
 
     public void Empty()
     {
-        for(int i = 0; i < Count; i++)
+        int deckCount = Count;
+        for(int i = 0; i < deckCount; i++)
         {
-            Remove(i);
+            Remove(0);
         }
     }
 

@@ -43,7 +43,6 @@ public class PlayBoard : MonoBehaviour
             // damage matchups when opposing slots are filled
             if (pair.Player.Creature && pair.Enemy.Creature)
             {
-                Debug.Log("Entering Pair");
                 // prioritizes the presumed winning opponent, otherwise if both survive, the player goes first
                 // TODO increase complexity so attacks actually happen in sequence rather than all at once, as of now Actions is just damage boosts
                 int predictPlayerHP = pair.Player.Creature.CurrentHealth - 
@@ -67,8 +66,7 @@ public class PlayBoard : MonoBehaviour
 
             // when player slot only is filled
             else if (pair.Player.Creature && !pair.Enemy.Creature)
-            {
-                Debug.Log("Only Player"); 
+            { 
                 SetTargetToEnemy();
                 AttackActions(pair.Player.Creature);
             }
@@ -76,7 +74,6 @@ public class PlayBoard : MonoBehaviour
             // when enemy slot only is filled
             else if (!pair.Player.Creature && pair.Enemy.Creature)
             {
-                Debug.Log("Only Enemy");
                 SetTargetToPlayer();
                 AttackActions(pair.Enemy.Creature);
             }

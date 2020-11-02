@@ -66,28 +66,33 @@ public class PlayerController : MonoBehaviour, IDamageable, ITargetable, IBoosta
 
     public void ClearDecks()
     {
+        Debug.Log("Emptying Decks");
         if (!_abilityDiscard.IsEmpty)
         {
             _abilityDiscard.Empty();
             CurrentDiscard?.Invoke(_abilityDiscard);
+            Debug.Log("Discard Count: " + _abilityDiscard.Count);
         }
 
         if (!_abilityDeck.IsEmpty)
         {
             _abilityDeck.Empty();
             CurrentMainDeck?.Invoke(_abilityDeck);
+            Debug.Log("Deck Count: " + _abilityDeck.Count);
         }
     
         if (!_playerHand.IsEmpty)
         {
             _playerHand.Empty();
             CurrentHand?.Invoke(_playerHand);
+            Debug.Log("Hand Count: " + _playerHand.Count);
         }
 
         if (!_boostDeck.IsEmpty)
         {
             _boostDeck.Empty();
             CurrentBoostDeck?.Invoke(_boostDeck);
+            Debug.Log("Boost Count: " + _boostDeck.Count);
         }
             
     }
