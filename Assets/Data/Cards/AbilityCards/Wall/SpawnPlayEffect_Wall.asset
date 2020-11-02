@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 79828abb26947d7408051a02ae5a434b, type: 3}
-  m_Name: SpawnPlayEffect_Cook
+  m_Name: SpawnPlayEffect_Wall
   m_EditorClassIdentifier: 
-  _creatureToSpawn: {fileID: 5429463800576471595, guid: c42f275bd1da87e4584de6f14711bb41,
+  _creatureToSpawn: {fileID: 7927220780020825049, guid: bfa1360e181842b4488f05b88da6526c,
     type: 3}

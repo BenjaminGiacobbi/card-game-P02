@@ -6,6 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Creature))]
 public class CreatureUI : MonoBehaviour
 {
+    [SerializeField] GameObject _uiGroup = null;
     [SerializeField] Slider _hpSlider = null;
     [SerializeField] Text _hpText = null;
     [SerializeField] Text _actionText = null;
@@ -38,6 +39,7 @@ public class CreatureUI : MonoBehaviour
         _hpSlider.minValue = 0;
         _hpSlider.maxValue = _attachedCreature.BaseHealth;
         _attackText.text = "Atk: " + _attachedCreature.AttackDamage;
+        _uiGroup.transform.rotation = Quaternion.Euler(_uiGroup.transform.rotation.x, 0, _uiGroup.transform.rotation.z);
     }
 
     private void UpdateHealthDisplay(int healthValue)

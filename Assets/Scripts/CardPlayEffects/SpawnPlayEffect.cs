@@ -16,7 +16,12 @@ public class SpawnPlayEffect : CardPlayEffect
                 (_creatureToSpawn.gameObject, space.SpawnLocation.position, Quaternion.identity);
             newCreature.transform.parent = space.transform;
             newCreature.transform.localRotation = Quaternion.Euler(newCreature.transform.localRotation.x, 0, newCreature.transform.localRotation.z);
+            Debug.Log("Setting Creature");
             space.Creature = newCreature.GetComponent<Creature>();
+            if (space.Creature == null)
+            {
+                Debug.Log("Creature Missing");
+            }
             Debug.Log("Spawn new Object: " + space.name);
         }
         else

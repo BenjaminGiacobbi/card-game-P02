@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 594f698fefa25e14796497a5a850b2da, type: 3}
-  m_Name: Ability_Cook
+  m_Name: Ability_Knife
   m_EditorClassIdentifier: 
-  _name: Cook
-  _cost: 8
-  _graphic: {fileID: 21300000, guid: f33ea73fa8c0e964596e99ea163c8ff1, type: 3}
-  _playEffect: {fileID: 11400000, guid: 4a2723edeeeb28b46824345afc64f1ec, type: 2}
+  _name: Knife
+  _cost: 1
+  _graphic: {fileID: 21300000, guid: 6225614d5a4ba6e4883cb1541415584d, type: 3}
+  _playEffect: {fileID: 11400000, guid: 051f5be6e6daf8f418fdb5a347c97988, type: 2}
+  _type: 1
