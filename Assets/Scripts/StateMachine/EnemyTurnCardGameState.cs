@@ -10,13 +10,14 @@ public class EnemyTurnCardGameState : CardGameState
     public static event Action EnemyTurnBegan = delegate { };
     public static event Action EnemyTurnEnded = delegate { };
 
+    [SerializeField] EnemyController _enemy = null;
     [SerializeField] float _pauseDuration = 1.5f;
 
     public override void Enter()
     {
         Debug.Log("Enemy Turn: ...Enter");
         EnemyTurnBegan?.Invoke();
-
+        _enemy.EnemyThinkSequence();
         StartCoroutine(EnemyThinkingRoutine(_pauseDuration));
     }
 

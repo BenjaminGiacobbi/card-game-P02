@@ -1532,6 +1532,8 @@ GameObject:
   m_Component:
   - component: {fileID: 327239770}
   - component: {fileID: 327239771}
+  - component: {fileID: 327239773}
+  - component: {fileID: 327239772}
   m_Layer: 0
   m_Name: EnemyController
   m_TagString: Untagged
@@ -1566,9 +1568,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a68855ccb06004aa79e54a80a0b17d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxHandSize: 10
+  _startingHandSize: 5
+  _damageModifier: 1
+  _actions: 1
+  _maxHealth: 30
+  _board: {fileID: 0}
+  _boostStepPercentage: 0.75
+  _boostWeakenedPriorityPercentage: 0.7
+  _turnBoostPercentage: 0.2
   _hpSlider: {fileID: 1865192393}
   _hpText: {fileID: 2031048357}
-  _maxHealth: 60
+  textInt: 0
+--- !u!114 &327239772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327239769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dc27a2b83dfab148b042b6eb55baad8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _board: {fileID: 0}
+  _boostStepPercentage: 0.75
+  _boostWeakenedPriorityPercentage: 0.7
+  _turnBoostPercentage: 0.2
+--- !u!114 &327239773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327239769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc505fd91da460342a6dabfec77b950f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &375992281
 GameObject:
   m_ObjectHideFlags: 0
@@ -5088,28 +5127,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdaa2012bfe23d4438f8bde6033b689a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _abilityDeckConfig:
+  _playerAbilityDeck:
+  - {fileID: 11400000, guid: dc47518f1c381d84a9a1de7254fde673, type: 2}
+  - {fileID: 11400000, guid: 5e22f33c98e111b43a759e8861b9f900, type: 2}
+  - {fileID: 11400000, guid: 5e22f33c98e111b43a759e8861b9f900, type: 2}
   - {fileID: 11400000, guid: 011c959a7494f214cbb64a4759c1bc1e, type: 2}
   - {fileID: 11400000, guid: 011c959a7494f214cbb64a4759c1bc1e, type: 2}
   - {fileID: 11400000, guid: 2fcb55b8317f0b149ac973c0f9d5b458, type: 2}
-  - {fileID: 11400000, guid: 5e22f33c98e111b43a759e8861b9f900, type: 2}
-  - {fileID: 11400000, guid: dc47518f1c381d84a9a1de7254fde673, type: 2}
   - {fileID: 11400000, guid: de369d1b4237b374d9b96bb52c8bfaeb, type: 2}
   - {fileID: 11400000, guid: de369d1b4237b374d9b96bb52c8bfaeb, type: 2}
   - {fileID: 11400000, guid: ce45a17fc8818d144b392b40c9013dba, type: 2}
   - {fileID: 11400000, guid: ce45a17fc8818d144b392b40c9013dba, type: 2}
-  - {fileID: 11400000, guid: ce45a17fc8818d144b392b40c9013dba, type: 2}
-  _boostDeckConfig:
+  _playerBoostDeck:
   - {fileID: 11400000, guid: f9bb814b046d82c42b55fb37ba22756a, type: 2}
   - {fileID: 11400000, guid: 25ca0a3a7d17d384eaab4d261346b0a1, type: 2}
   - {fileID: 11400000, guid: ce77b346666871240a9b30a717e650f5, type: 2}
   - {fileID: 11400000, guid: 337d3e1b7fec21f4eaf97ba19cc08b4b, type: 2}
   - {fileID: 11400000, guid: 60edcbeaaf8597043977e658ecc98289, type: 2}
-  - {fileID: 11400000, guid: 38aab8d99ce614b4eaeda9d8fb591866, type: 2}
-  - {fileID: 11400000, guid: e5b7574c31a73264d95fef00bad23885, type: 2}
-  - {fileID: 11400000, guid: 92f2438527d9a744cb66dc9b583b3c0b, type: 2}
+  _enemyAbilityDeck:
+  - {fileID: 11400000, guid: ce45a17fc8818d144b392b40c9013dba, type: 2}
+  _enemyBoostDeck:
+  - {fileID: 11400000, guid: 60edcbeaaf8597043977e658ecc98289, type: 2}
+  - {fileID: 11400000, guid: 60edcbeaaf8597043977e658ecc98289, type: 2}
+  - {fileID: 11400000, guid: 337d3e1b7fec21f4eaf97ba19cc08b4b, type: 2}
   - {fileID: 11400000, guid: 5641dc20b5993644d872298d103938b7, type: 2}
-  - {fileID: 11400000, guid: 7b11647f6d37ee94c84450833085da33, type: 2}
+  - {fileID: 11400000, guid: 38aab8d99ce614b4eaeda9d8fb591866, type: 2}
   _board: {fileID: 1329499007}
   _nextButton: {fileID: 309859170}
 --- !u!114 &1675131427
@@ -5519,7 +5561,7 @@ MonoBehaviour:
   _maxHandSize: 10
   _startingHandSize: 5
   _damageModifier: 1
-  _playerActions: 1
+  _actions: 1
   _maxHealth: 30
 --- !u!4 &1752743221
 Transform:

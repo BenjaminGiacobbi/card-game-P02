@@ -4,7 +4,8 @@
 public class SpawnPlayEffect : CardPlayEffect
 {
     [SerializeField] Creature _creatureToSpawn = null;
-    private GameObject _spawnedObject = null;
+    public Creature Creature => _creatureToSpawn;
+    // private GameObject _spawnedObject = null;
 
     public override void Activate(ITargetable target)
     {

@@ -192,7 +192,7 @@ public class UIManager : MonoBehaviour
     private void ShowBoostStep()
     {
         _boostPanel.SetActive(true);
-        _boostPanel.GetComponent<IDeckView<BoostCard>>()?.ShowDeck(_player._boostDeck);
+        _boostPanel.GetComponent<IDeckView<BoostCard>>()?.ShowDeck(_player.BoostDeck);
     }
 
     private void HideBoostStep()

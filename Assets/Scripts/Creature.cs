@@ -41,7 +41,12 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 
     public float DefenseModifier { get; private set; } = 1.0f;
 
-    // public BoardSpace CurrentSpace { get; private set; }
+    // constructor for use in instancing
+    public Creature(int health, int damage)
+    {
+        BaseHealth = health;
+        AttackDamage = damage;
+    }
 
     private void Start()
     {

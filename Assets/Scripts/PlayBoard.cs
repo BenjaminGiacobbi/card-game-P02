@@ -16,7 +16,7 @@ public class PlayBoard : MonoBehaviour
     [SerializeField] BoardSpace _enemySpace1 = null;
     [SerializeField] BoardSpace _enemySpace2 = null;
 
-    SpacePair[] _pairsList = new SpacePair[3];
+    public SpacePair[] PairsList = new SpacePair[3];
 
 
     private void Awake()
@@ -29,16 +29,16 @@ public class PlayBoard : MonoBehaviour
     // this could be made more modular in the future
     private void Start()
     {
-        _pairsList[0] = new SpacePair(_playerSpace0, _enemySpace0);
-        _pairsList[1] = new SpacePair(_playerSpace1, _enemySpace1);
-        _pairsList[2] = new SpacePair(_playerSpace2, _enemySpace2);
+        PairsList[0] = new SpacePair(_playerSpace0, _enemySpace0);
+        PairsList[1] = new SpacePair(_playerSpace1, _enemySpace1);
+        PairsList[2] = new SpacePair(_playerSpace2, _enemySpace2);
     }
 
 
     // TODO add delays and visuals for each battle, calling upon the space/creature's own methods
     public void BattleEnemies()
     {
-        foreach(SpacePair pair in _pairsList)
+        foreach(SpacePair pair in PairsList)
         {
             // damage matchups when opposing slots are filled
             if (pair.Player.Creature && pair.Enemy.Creature)
@@ -80,7 +80,7 @@ public class PlayBoard : MonoBehaviour
 
     public void ClearBoard()
     {
-        foreach (SpacePair pair in _pairsList)
+        foreach (SpacePair pair in PairsList)
         {
             pair.Player.ResetCreatureState();
             pair.Enemy.ResetCreatureState();

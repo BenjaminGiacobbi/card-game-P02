@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class CommandInvoker : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Queue<ICommand> CommandBuffer = new Queue<ICommand>();
+
+    public void AddCommand(ICommand command)
     {
-        
+        CommandBuffer.Enqueue(command);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void PlayCommands()
     {
-        
+        int count = CommandBuffer.Count;
+        for(int i = 0; i < count; i++)
+        {
+            CommandBuffer.Dequeue().Execute();
+        }
     }
 }
