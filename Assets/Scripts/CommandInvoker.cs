@@ -17,6 +17,7 @@ public class CommandInvoker : MonoBehaviour
         for(int i = 0; i < count; i++)
         {
             CommandBuffer.Dequeue().Execute();
+            // visual flair
         }
     }
 }

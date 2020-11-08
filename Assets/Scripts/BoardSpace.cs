@@ -40,7 +40,11 @@ public class BoardSpace : MonoBehaviour, ITargetable
     public void ResetCreatureState()
     {
         if (Creature != null)
+        {
             Creature.Kill();
+            Creature = null;
+        }
+            
     }
 
     public void Target()

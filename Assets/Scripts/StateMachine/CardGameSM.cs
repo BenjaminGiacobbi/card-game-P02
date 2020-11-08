@@ -4,10 +4,10 @@ public class CardGameSM : StateMachine
 {
     [SerializeField] InputController _input = null;
     public InputController Input => _input;
-    [SerializeField] CardGameController _player = null;
-    public CardGameController Player => _player;
-    [SerializeField] CardGameController _enemy = null;
-    public CardGameController Enemy => _enemy;
+    [SerializeField] PlayerController _player = null;
+    public PlayerController Player => _player;
+    [SerializeField] EnemyController _enemy = null;
+    public EnemyController Enemy => _enemy;
 
     void Start()
     {

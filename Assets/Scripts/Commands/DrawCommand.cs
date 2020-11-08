@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DrawCommand : MonoBehaviour
+public class DrawCommand : ICommand
 {
-    // Start is called before the first frame update
-    void Start()
+    CardGameController _controller;
+
+    public DrawCommand(CardGameController controller)
     {
-        
+        _controller = controller;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Execute()
     {
-        
+        _controller.Draw();
     }
 }

@@ -10,11 +10,8 @@ public class HealPlayEffect : CardPlayEffect
 
     public override void Activate(ITargetable target)
     {
-        Debug.Log("Using Boost 1");
         MonoBehaviour objectToBoost = target as MonoBehaviour;
-        Debug.Log(objectToBoost);
         IBoostable boostable = objectToBoost?.GetComponent<IBoostable>();
-        Debug.Log(boostable);
         if (objectToBoost != null)
         {
             Debug.Log("Using Boost 2");

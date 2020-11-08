@@ -41,19 +41,12 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 
     public float DefenseModifier { get; private set; } = 1.0f;
 
-    // constructor for use in instancing
-    public Creature(int health, int damage)
-    {
-        BaseHealth = health;
-        AttackDamage = damage;
-    }
-
     private void Start()
     {
         CurrentHealth = BaseHealth;
         HealthSet?.Invoke(CurrentHealth);
         ActionSet?.Invoke(CurrentActions);
-        DefenseSet?.Invoke(1.0f / DefenseModifier * 100);
+        DefenseSet?.Invoke(DefenseModifier);
     }
 
     public void Kill()
@@ -104,6 +97,6 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     public void BoostDefense(float modifier)
     {
         DefenseModifier = modifier;
-        DefenseSet?.Invoke(1.0f / DefenseModifier * 100);
+        DefenseSet?.Invoke(DefenseModifier);
     }
 }

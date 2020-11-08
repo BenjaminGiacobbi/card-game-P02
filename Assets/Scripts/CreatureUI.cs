@@ -59,6 +59,7 @@ public class CreatureUI : MonoBehaviour
 
     private void UpdateDefenseText(float defenseValue)
     {
-        _defenseText.text = "Def: " + defenseValue + "%";
+        Debug.Log("Defense value: " + defenseValue);
+        _defenseText.text = "Def: " + ((1.0f / defenseValue) * 100) + "%";
     }
 }

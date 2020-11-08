@@ -161,7 +161,7 @@ public class UIManager : MonoBehaviour
 
     private void UpdateDefenseDisplay(float currentDefense)
     {
-        _defenseText.text = "Defense: " + currentDefense + "%";
+        _defenseText.text = "Defense: " +  (1 / currentDefense * 100) + "%";
     }
 
     private void UpdateHealthDisplay(int currentHealth)

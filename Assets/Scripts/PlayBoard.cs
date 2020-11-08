@@ -32,6 +32,7 @@ public class PlayBoard : MonoBehaviour
         PairsList[0] = new SpacePair(_playerSpace0, _enemySpace0);
         PairsList[1] = new SpacePair(_playerSpace1, _enemySpace1);
         PairsList[2] = new SpacePair(_playerSpace2, _enemySpace2);
+        Debug.Log(PairsList);
     }
 
 

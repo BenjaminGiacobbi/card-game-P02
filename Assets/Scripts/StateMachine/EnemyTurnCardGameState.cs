@@ -17,22 +17,23 @@ public class EnemyTurnCardGameState : CardGameState
     {
         Debug.Log("Enemy Turn: ...Enter");
         EnemyTurnBegan?.Invoke();
-        _enemy.EnemyThinkSequence();
         StartCoroutine(EnemyThinkingRoutine(_pauseDuration));
     }
 
     public override void Exit()
     {
         Debug.Log("Enemy Turn: Exit...");
+        EnemyTurnEnded?.Invoke();
     }
 
     IEnumerator EnemyThinkingRoutine(float duration)
     {
         Debug.Log("Enemy Thinking...");
-        yield return new WaitForSeconds(duration);
+        _enemy.EnemyThinkSequence();
+        yield return new WaitForSeconds(duration / 2);
 
-        Debug.Log("Enemy performs action");
-        EnemyTurnEnded?.Invoke();
+        _enemy.RunCommandSequence();
+        yield return new WaitForSeconds(duration / 2);
 
         // turn over, return to player
         StateMachine.ChangeState<TurnResultsCardGameState>();
