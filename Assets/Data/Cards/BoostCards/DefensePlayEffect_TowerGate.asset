@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c3f32bdc69a16e49b4097b0d45f441b, type: 3}
   m_Name: DefensePlayEffect_TowerGate
   m_EditorClassIdentifier: 
-  _damageModifier: 0.2
+  _damageModifier: 0

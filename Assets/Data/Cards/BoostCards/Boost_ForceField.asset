@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Boost_ForceField
   m_EditorClassIdentifier: 
   _name: Force Field
-  _uses: 4
+  _uses: 3
   _graphic: {fileID: 21300000, guid: 0ffdda57bba08514f85ab5a5f11d4b19, type: 3}
   _playEffect: {fileID: 11400000, guid: 3963e256d2d06384897e5236df30d494, type: 2}

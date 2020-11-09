@@ -10,16 +10,11 @@ public class DefensePlayEffect : CardPlayEffect
 
     public override void Activate(ITargetable target)
     {
-        Debug.Log("Using Boost 1");
         MonoBehaviour objectToBoost = target as MonoBehaviour;
-        Debug.Log(objectToBoost);
-        IBoostable boostable = objectToBoost?.GetComponent<IBoostable>();
-        Debug.Log(boostable);
         if (objectToBoost != null)
         {
-            Debug.Log("Using Boost 2");
             _damageModifier = Mathf.Clamp(_damageModifier, 0.0f, 1.0f);
-            boostable.BoostDefense(_damageModifier);
+            objectToBoost?.GetComponent<IBoostable>().BoostDefense(_damageModifier);
         }
     }
 }

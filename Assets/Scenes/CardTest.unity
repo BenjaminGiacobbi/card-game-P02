@@ -1610,9 +1610,11 @@ MonoBehaviour:
   _actions: 1
   _maxHealth: 30
   _board: {fileID: 1329499007}
-  _boostStepPercentage: 0.75
-  _boostWeakenedPriorityPercentage: 0.7
-  _turnBoostPercentage: 0.2
+  _boostStepPercent: 0.75
+  _turnBoostPercent: 0.4
+  _prioritizeWeakenedPercent: 0.7
+  _playOpposedPercent: 0.5
+  _playWeightedPercent: 0.6
   _hpSlider: {fileID: 1865192393}
   _hpText: {fileID: 2031048357}
 --- !u!114 &327239773

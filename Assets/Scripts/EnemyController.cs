@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,21 +10,25 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
     [SerializeField] PlayBoard _board = null;
 
     [Header("Rate AI will use boost card in boost step")]
-    [SerializeField] float _boostStepPercentage = 0.75f;
-
-    [Header("Rate AI will prioritize weakened monsters with turn boost cards")]
-    [SerializeField] float _boostWeakenedPriorityPercentage = 0.7f;
+    [SerializeField] float _boostStepPercent = 0.75f;
 
     [Header("Rate AI use boost on monster each action")]
-    [SerializeField] float _turnBoostPercentage = 0.2f;
+    [SerializeField] float _turnBoostPercent = 0.2f;
 
+    [Header("Rate AI will prioritize weakened monsters with turn boost cards")]
+    [SerializeField] float _prioritizeWeakenedPercent = 0.7f;
+
+    [Header("Rate AI will counter player's creatures each action")]
+    [SerializeField] float _playOpposedPercent = 0.65f;
+
+    [Header("Rate AI will prioritize monsters with high average stats")]
+    [SerializeField] float _playWeightedPercent = 0.60f;
 
     [SerializeField] Slider _hpSlider = null;
     [SerializeField] Text _hpText = null;
     CommandInvoker _invoker = null;
     bool[,] _spaceMatrix = null;
-    int[] _playableHand = null;
-    int _actionCount = 0;
+    List<int> _playableHand = null;
 
     private void Awake()
     {
@@ -50,18 +55,19 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         _hpText.text = CurrentHealth.ToString();
     }
 
-
-    public void RunCommandSequence()
+    public override void BoostHealth(int value)
     {
-        _invoker.PlayCommands();
+        base.BoostHealth(value);
+        if (CurrentHealth > _maxHealth)
+            _hpSlider.maxValue = CurrentHealth;
+        else
+            _hpSlider.maxValue = _maxHealth;
+        _hpSlider.value = CurrentHealth;
     }
-
 
     private bool RollChance(float percentChance)
     {
         float random = Random.Range(0.0f, 1.0f);
-        Debug.Log("Random: " + random);
-        Debug.Log("Test: " + (1 - percentChance));
         if (random >= (1 - percentChance))
             return true;
         else
@@ -90,16 +96,14 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         if(BoostDeck.Count > 0)
         {
             // play boost command
-            if (RollChance(_boostStepPercentage))
+            if (RollChance(_boostStepPercent))
             {
-                Debug.Log(_boostStepPercentage * 100 + ", PLAY BOOST");
-                PlayBoard.CurrentTarget = GetComponent<ITargetable>();
-                _invoker.AddCommand(new BoostCommand(this));
-                RunCommandSequence();
+                Debug.Log(_boostStepPercent * 100 + ", PLAY BOOST");
+                _invoker.ExecuteCommand(new BoostCommand(this, GetComponent<ITargetable>()));
             }
             else
             {
-                Debug.Log((1 - _boostStepPercentage) * 100 + ", SKIP BOOST");
+                Debug.Log((1 - _boostStepPercent) * 100 + ", SKIP BOOST");
             }
         }
     }
@@ -123,60 +127,52 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             int drawAmount = CurrentHandSize - Hand.Count;
             for(int i = 0; i < drawAmount; i++)
             {
-                _invoker.AddCommand(new DrawCommand(this));
+                _invoker.ExecuteCommand(new DrawCommand(this));
             }
-            RunCommandSequence();
         }
-
-
-        _actionCount = Actions;
-
-        Debug.Log("ACTIONS: " + _actionCount);
-        for (int i = 0; i < Hand.Count; i++)
-        {
-            Debug.Log(Hand.GetCard(i).Name);
-        }
-
+        
         // process sequence while actions remain
-        while (_actionCount > 0)
+        while (Actions > 0)
         {
-            Debug.Log("ACTION SEQUENCE: ");
-            // record of costs available to play
-            _playableHand = new int[Hand.Count];
-            int costArrayIndex = 0;
+            Debug.Log("ACTION SEQUENCE: ");            
+
+            // info collection for playable hand before each action
+            _playableHand = new List<int>();
             for (int i = 0; i < Hand.Count; i++)
             {
-                if (Hand.GetCard(i).Cost <= _actionCount)
-                {
-                    _playableHand[costArrayIndex] = i;
-                    costArrayIndex++;
-                }
+                if (Hand.GetCard(i).Cost <= Actions)
+                    _playableHand.Add(i); 
             }
 
-            // TODO this fails to update because actions don't run until after the sequence, so it needs to update creature count predictively
-            // also fills matrix references for current board layout
+            // info collection for board state at beginning of enemy turn
             int creatureCount = CollectCreatureInfo();
-            Debug.Log("CREATURE COUNT: " + creatureCount);
-
 
             // first decide whether or not to use boost card (chance on if creatures or always on MAX creatures)
-            if ((creatureCount > 0 && _playableHand.Length == 0) ||
-                (creatureCount > 0 && RollChance(_turnBoostPercentage)) || 
+            if ((creatureCount > 0 && _playableHand.Count == 0) ||
+                (creatureCount > 0 && RollChance(_turnBoostPercent)) || 
                 creatureCount == _board.PairsList.Length)
             {
-                // Roll Chance again to weight to focus on a low HP monster, then set as target
-                // boost command with target of creature
                 Debug.Log("TURN BOOST BRANCH");
-                _actionCount--;
+                PlayRandomBoost();
                 continue;
             }
-            else if (_playableHand.Length > 0 && creatureCount < _board.PairsList.Length)
+            else if (_playableHand.Count > 0 && creatureCount < _board.PairsList.Length)
             {
-                Debug.Log("TURN SPAWN BRANCH");
-                if (PlayInOpposedSpaces())
-                    continue;
-                else if (PlayInUnopposedSpaces())
-                    continue;
+                // rolls chance to prioritize playing opposed, but if it fails to summon it'do the opposite
+                if (RollChance(_playOpposedPercent))
+                {
+                    if (PlayInOpposedSpaces())
+                        continue;
+                    else if (PlayInUnopposedSpaces())
+                        continue;
+                }
+                else
+                {
+                    if (PlayInUnopposedSpaces())
+                        continue;
+                    else if (PlayInOpposedSpaces())
+                        continue;
+                }
             }
 
             // if it can't perform a single action up to this point,
@@ -184,46 +180,49 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             Debug.Log("PASS TURN");
             break;
         }
-        _actionCount = 0;
-        _playableHand = null;
-    }
-
-
-    private void SetTarget(BoardSpace space)
-    {
-        PlayBoard.CurrentTarget = space.GetComponent<ITargetable>();
-    }
-
-
-    private void SetTarget(Creature creature)
-    {
-        PlayBoard.CurrentTarget = creature.GetComponent<ITargetable>();
     }
 
     private int CollectCreatureInfo()
     {
         ClearSpaceMatrix();
-        int enemyCreatures = 0;
+        int creatures = 0;
         for (int i = 0; i < _spaceMatrix.GetLength(0); i++)
         {
             // if a creature is not null, true reference in matrix position
-            Debug.Log("Column " + i + " Enemy: " + _board.PairsList[i].Enemy.Creature);
             if (_board.PairsList[i].Enemy.Creature)
             {
                 _spaceMatrix[i, 0] = true;
-                enemyCreatures++;
+                creatures++;
             }
-
-            Debug.Log("Column " + i + " Player: " + _board.PairsList[i].Player.Creature);
             if (_board.PairsList[i].Player.Creature)
                 _spaceMatrix[i, 1] = true;
         }
         Debug.Log("[" + _spaceMatrix[0, 0] + "]   [" + _spaceMatrix[1, 0] + "]   [" + _spaceMatrix[2, 0] + "]\n" +
                   "[" + _spaceMatrix[0, 1] + "]   [" + _spaceMatrix[1, 1] + "]   [" + _spaceMatrix[2, 1] + "]");
 
-        return enemyCreatures;
+        return creatures;
     }
 
+
+    // should only be used during turn since it's dependant on current board
+    private void PlayRandomBoost()
+    {
+        List<int> creatureIndexes = new List<int>();
+        for (int i = 0; i < _spaceMatrix.GetLength(0); i++)
+        {
+            if(_spaceMatrix[i, 0])
+            {
+                creatureIndexes.Add(i);
+                Debug.Log("Adding index " + i + "to list");
+            }
+        }
+
+        int index = Random.Range(0, creatureIndexes.Count - 1);
+        Debug.Log("Random index: " + index);
+        ITargetable boostTarget = _board.PairsList[index].Enemy.Creature.GetComponent<ITargetable>();
+        _invoker.ExecuteCommand(new BoostCommand(this, boostTarget));
+
+    }
 
     // seeks to counter opposed spaces and plays a useful creature
     private bool PlayInOpposedSpaces()
@@ -235,11 +234,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         {
             // check if any player spaces are filled but enemy spaces aren't
             if (!_spaceMatrix[i, 0] && _spaceMatrix[i, 1])
-            {
-                Debug.Log("Adding index " + i + " as opposed");
-                indexes.Add(i);
-            }
-                
+                indexes.Add(i);  
         }
 
 
@@ -247,20 +242,9 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         if (indexes.Count > 0)
         {
             Debug.Log("FOUND OPPOSED SPACE");
-            int selectedIndex = -1;
-            if (indexes.Count == 1)
-                selectedIndex = indexes[0];
-            else
-                selectedIndex = Random.Range(0, indexes.Count - 1);
-            Debug.Log("Selected Index: " + indexes[selectedIndex]);
-            SetTarget(_board.PairsList[indexes[selectedIndex]].Enemy);
-            if (WeightedMonsterSelection())
-            {
-                _spaceMatrix[indexes[selectedIndex], 0] = true;
-                return true;
-            }
-            else
-                return false;
+            int selectedIndex = Random.Range(0, indexes.Count > 0 ? indexes.Count - 1 : 0);
+            ITargetable spawnTarget = _board.PairsList[indexes[selectedIndex]].Enemy.GetComponent<ITargetable>();
+            return WeightedMonsterSelection(spawnTarget);
         }
 
         Debug.Log("FAILED TO SPAWN");
@@ -277,47 +261,30 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         {
             // check if any pairs are empty
             if (!_spaceMatrix[i, 0] && !_spaceMatrix[i, 1])
-            {
-                Debug.Log("Adding index " + i + " as unopposed");
                 indexes.Add(i);
-            }
-                
         }
 
         // plays a powerful creature to damage the player a lot
         if(indexes.Count > 0)
         {
             Debug.Log("FOUND UNOPPOSED SPACE");
-            Debug.Log(indexes);
-            int selectedIndex = -1;
-            if (indexes.Count == 1)
-                selectedIndex = indexes[0];
-            else
-                selectedIndex = Random.Range(0, indexes.Count - 1);
-            Debug.Log("Selected Index: " + indexes[selectedIndex]);
-            SetTarget(_board.PairsList[indexes[selectedIndex]].Enemy);
-
-            if (PowerMonsterSelection())
-            {
-                _spaceMatrix[indexes[selectedIndex], 0] = true;
-                return true;
-            }
-            else
-                return false;
+            int selectedIndex = Random.Range(0, indexes.Count > 0 ? indexes.Count - 1 : 0);
+            ITargetable spawnTarget = _board.PairsList[indexes[selectedIndex]].Enemy.GetComponent<ITargetable>();
+            return PowerMonsterSelection(spawnTarget);
         }
 
         Debug.Log("FAILED TO SPAWN");
         return false;
     }
 
-    private bool WeightedMonsterSelection() // needs a target parameter?
+    private bool WeightedMonsterSelection(ITargetable target) // needs a target parameter?
     {
         // roll weight for full random first
         if (RollChance(0.15f))
         {
             Debug.Log("RANDOM MONSTER");
-            int index = Random.Range(0, Hand.Count - 1);
-            _invoker.AddCommand(new AbilityCommand(this, index));
+            int index = Random.Range(0, _playableHand.Count - 1);
+            _invoker.ExecuteCommand(new AbilityCommand(this, target, _playableHand[index]));
             return true;
         }
 
@@ -327,7 +294,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         int hpIndex = -1;
 
         // finds the highest avg stat and HP creature spawns among the playable hand
-        for (int i = 0; i < _playableHand.Length; i++)
+        for (int i = 0; i < _playableHand.Count; i++)
         {
             // only searches through playable cards within current cost count
             SpawnPlayEffect spawn = Hand.GetCard(_playableHand[i]).PlayEffect as SpawnPlayEffect;
@@ -348,21 +315,16 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             }
         }
 
-        Debug.Log("HIGHEST AVG: " + highestAvg);
-        Debug.Log("HIGHEST HP: " + highestHP);
-
         if (RollChance(0.6f) || hpIndex == -1)
         {
             Debug.Log("SPAWN HIGHEST AVG");
-            _invoker.AddCommand(new AbilityCommand(this, avgIndex));
-            _actionCount -= Hand.GetCard(avgIndex).Cost;
+            _invoker.ExecuteCommand(new AbilityCommand(this, target, avgIndex));
             return true;
         }
         else if (hpIndex != -1)
         {
             Debug.Log("SPAWN HIGHEST HP");
-            _invoker.AddCommand(new AbilityCommand(this, hpIndex));
-            _actionCount -= Hand.GetCard(hpIndex).Cost;
+            _invoker.ExecuteCommand(new AbilityCommand(this, target, hpIndex));
             return true;
         }
 
@@ -371,13 +333,13 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
     }
 
 
-    private bool PowerMonsterSelection()
+    private bool PowerMonsterSelection(ITargetable target)
     {
         int highestAtk = 0;
         int atkIndex = -1;
 
         // finds the highest avg stat and HP creature spawns among the playable hand
-        for (int i = 0; i < _playableHand.Length; i++)
+        for (int i = 0; i < _playableHand.Count; i++)
         {
             SpawnPlayEffect spawn = Hand.GetCard(_playableHand[i]).PlayEffect as SpawnPlayEffect;
             if (spawn != null)
@@ -394,12 +356,9 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
 
         if (atkIndex != -1)
         {
-            Debug.Log("SPAWN POWER");
-            _invoker.AddCommand(new AbilityCommand(this, atkIndex));
-            _actionCount -= Hand.GetCard(atkIndex).Cost;
+            _invoker.ExecuteCommand(new AbilityCommand(this, target, atkIndex));
             return true;
         }
-
 
         Debug.Log("FAILED TO SPAWN");
         return false;

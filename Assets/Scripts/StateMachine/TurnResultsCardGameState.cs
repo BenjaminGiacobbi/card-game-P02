@@ -39,10 +39,14 @@ public class TurnResultsCardGameState : CardGameState
             {
                 timer = 0;
 
-                if (StateMachine.Player.CurrentHealth <= 0 || StateMachine.Player.BoostDeck.Count == 0)
-                    StateMachine.ChangeState<PlayerLoseCardGameState>();
-                else if (StateMachine.Enemy.CurrentHealth <= 0 || StateMachine.Enemy.BoostDeck.Count == 0)
+                if (StateMachine.Enemy.CurrentHealth <= 0 || StateMachine.Enemy.BoostDeck.Count == 0)
+                {
                     StateMachine.ChangeState<PlayerWinCardGameState>();
+                }
+                else if (StateMachine.Player.CurrentHealth <= 0 || StateMachine.Player.BoostDeck.Count == 0)
+                {
+                    StateMachine.ChangeState<PlayerLoseCardGameState>();
+                }
                 else
                     StateMachine.ChangeState<BoostStepCardGameState>();
             }   

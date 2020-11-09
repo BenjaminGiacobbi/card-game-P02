@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Boost_FirstAid
   m_EditorClassIdentifier: 
   _name: First Aid
-  _uses: 3
+  _uses: 2
   _graphic: {fileID: 21300000, guid: 25131221b7408f347a9c44d0901e07cf, type: 3}
   _playEffect: {fileID: 11400000, guid: cd842e3d6c5d5e14ea26abb675251671, type: 2}

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90cdd5170f31898429226c8284895133, type: 3}
   m_Name: HealPlayEffect_FirstAid
   m_EditorClassIdentifier: 
-  _healValue: 15
+  _healValue: 8

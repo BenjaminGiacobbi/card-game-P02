@@ -29,10 +29,9 @@ public class EnemyTurnCardGameState : CardGameState
     IEnumerator EnemyThinkingRoutine(float duration)
     {
         Debug.Log("Enemy Thinking...");
-        _enemy.EnemyThinkSequence();
         yield return new WaitForSeconds(duration / 2);
 
-        _enemy.RunCommandSequence();
+        _enemy.EnemyThinkSequence();
         yield return new WaitForSeconds(duration / 2);
 
         // turn over, return to player

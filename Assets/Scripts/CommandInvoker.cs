@@ -4,20 +4,23 @@ using UnityEngine;
 
 public class CommandInvoker : MonoBehaviour
 {
-    private Queue<ICommand> CommandBuffer = new Queue<ICommand>();
+    private Stack<ICommand> CommandBuffer = new Stack<ICommand>();
 
-    public void AddCommand(ICommand command)
+    public void ExecuteCommand(ICommand command)
     {
-        CommandBuffer.Enqueue(command);
+        CommandBuffer.Push(command);
+        command.Execute();
     }
 
+    /*
     public void PlayCommands()
     {
         int count = CommandBuffer.Count;
         for(int i = 0; i < count; i++)
         {
-            CommandBuffer.Dequeue().Execute();
+            CommandBuffer.Push().Execute();
             // visual flair
         }
     }
+    */
 }
