@@ -13,8 +13,6 @@ public class PlayerTurnCardGameState : CardGameState
 
     public override void Enter()
     {
-        Debug.Log("Player Turn: ...Entering");
-
         _nextButton.onClick.AddListener(OnPressedConfirm);
         _winButton.onClick.AddListener(ProceedToWin);
         _loseButton.onClick.AddListener(ProceedToLose);
@@ -23,16 +21,12 @@ public class PlayerTurnCardGameState : CardGameState
 
     public override void Exit()
     {
-        Debug.Log("Player Turn: Exiting...");
         _nextButton.onClick.RemoveAllListeners();
         EndedPlayerTurn?.Invoke();
     }
 
     void OnPressedConfirm()
     {
-        Debug.Log("Attempt to enter Enemy State!");
-        // change to enemy turn state
-
         StateMachine.ChangeState<EnemyTurnCardGameState>();
     }
 

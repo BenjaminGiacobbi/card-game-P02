@@ -12,11 +12,6 @@ public class DamagePlayEffect : CardPlayEffect
         if (objectToDamage != null)
         {
             objectToDamage.TakeDamage(_damageAmount);
-            Debug.Log("Add damage to target.");
-        }
-        else
-        {
-            Debug.Log("Target is invulnerable.");
         }
     }
 }

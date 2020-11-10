@@ -11,16 +11,4 @@ public class CommandInvoker : MonoBehaviour
         CommandBuffer.Push(command);
         command.Execute();
     }
-
-    /*
-    public void PlayCommands()
-    {
-        int count = CommandBuffer.Count;
-        for(int i = 0; i < count; i++)
-        {
-            CommandBuffer.Push().Execute();
-            // visual flair
-        }
-    }
-    */
 }

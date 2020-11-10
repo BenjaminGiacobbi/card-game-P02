@@ -49,7 +49,7 @@ public class BoardSpace : MonoBehaviour, ITargetable
 
     public void Target()
     {
-        Debug.Log("Board Space Target");
+        // target feedback
     }
 }
 

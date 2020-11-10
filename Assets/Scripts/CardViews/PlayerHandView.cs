@@ -6,13 +6,18 @@ using UnityEngine.EventSystems;
 public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
 {
     [SerializeField] AbilityCardView _abilityCardPrefab = null;
+    [SerializeField] Transform _deckPosition = null;
+    [SerializeField] Canvas _mainCanvas = null;
+    [SerializeField] PlayerController _player = null;
     private HandItem[] _handItems = null;
     private GridLayoutGroup _gridLayout = null;
-    private PlayerController _player = null;
+    private int _lastCount = 0;
+    private GameObject _animObject = null;
+    bool startBool = false;
+    Vector2 _animStartSize = Vector2.zero;
 
     private void Awake()
     {
-        _player = FindObjectOfType<PlayerController>();
         _gridLayout = GetComponent<GridLayoutGroup>();
         
     }
@@ -30,19 +35,60 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
             GameObject obj = Instantiate(_abilityCardPrefab.gameObject, transform);
             obj.transform.SetSiblingIndex(i);
             _handItems[i] = new HandItem(obj.GetComponent<AbilityCardView>(), obj.GetComponent<Button>(), i, this);
-            obj.SetActive(false);
+            Debug.Log(_handItems[i].Obj.transform.position);
         }
+        _animObject = Instantiate(_abilityCardPrefab.gameObject, _mainCanvas.transform);
+        _animObject.SetActive(false);
+        RectTransform rect = _animObject.GetComponent<RectTransform>();
+        _animStartSize = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y);
     }
 
     public void ShowDeck(Deck<AbilityCard> deck)
     {
-        gameObject.SetActive(true);
-        ClearList();
-        for (int i = 0; i < deck.Count; i++)
+        // TODO need to find a way to set the physical position under gridlayout, it doesn't seem to keep until they're activated
+        if(!startBool)
         {
-            _handItems[i].CardView.Display(deck.GetCard(i));
-            _handItems[i].Obj.SetActive(true); 
+            for (int i = 0; i < _handItems.Length; i++)
+            {
+                _handItems[i].Obj.SetActive(false);
+            }
+            startBool = true;
         }
+
+        gameObject.SetActive(true);
+
+        if (_lastCount > deck.Count)
+        {
+            ClearList();
+            for (int i = 0; i < deck.Count; i++)
+            {
+                _handItems[i].CardView.Display(deck.GetCard(i));
+                _handItems[i].Obj.SetActive(true);
+            }
+        }
+        else
+        {
+            // TODO disgusting
+            for (int i = 0; i < deck.Count; i++)
+            {
+                _handItems[i].CardView.Display(deck.GetCard(i));
+                _animObject.gameObject.GetComponent<AbilityCardView>()?.Display(deck.GetCard(i));
+                Vector3 endPosition = _handItems[i].Obj.transform.position;
+                GameObject currentObject = _handItems[i].Obj;
+                _animObject.transform.position = _deckPosition.position;
+                _animObject.SetActive(true);
+                LeanTween.move(_animObject, endPosition, 0.25f).setOnComplete(() => { FinishAnimation(currentObject); });
+                LeanTween.size(_animObject.GetComponent<RectTransform>(), new Vector3(_gridLayout.cellSize.x, _gridLayout.cellSize.y, 1), 0.25f);
+            }
+        }
+        _lastCount = deck.Count;
+    }
+
+    public void FinishAnimation(GameObject obj)
+    {
+        _animObject.SetActive(false);
+        _animObject.GetComponent<RectTransform>().sizeDelta.Set(_animStartSize.x, _animStartSize.y);
+        obj.SetActive(true);
     }
 
     public void HideDeck()
@@ -67,7 +113,6 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
     // TODO this is really bad but I had no idea where else to put this functionality - need a better organizational approach
     public void UseCard(int index)
     {
-        Debug.Log("Index: " + index);
         _player.PlayAbilityCard(index);
     }
 }

@@ -14,7 +14,6 @@ public class MenuCardGameState : CardGameState
 
     public override void Enter()
     {
-        Debug.Log("Menu: Entering...");
         _startButton.onClick.AddListener(StartGame);
         _quitButton.onClick.AddListener(QuitGame);
         EnteredMenu?.Invoke();
@@ -25,7 +24,6 @@ public class MenuCardGameState : CardGameState
         _startButton.onClick.RemoveListener(StartGame);
         _quitButton.onClick.RemoveListener(QuitGame);
         ExitedMenu?.Invoke();
-        Debug.Log("Menu: Exiting...");
     }
 
     public void StartGame()

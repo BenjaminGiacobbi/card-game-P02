@@ -89,7 +89,7 @@ public class Deck<T> where T : Card // called a constraint
     {
         if (IsEmpty)
         {
-            Debug.LogWarning("Deck: Can't DRAW new item from empty deck!");
+            // draw fail feedback
             return default;
         }
 
@@ -112,12 +112,12 @@ public class Deck<T> where T : Card // called a constraint
     {
         if (IsEmpty)
         {
-            Debug.LogWarning("Deck: Can't REMOVE from an empty deck!");
+            // cant remove feedback
             return;
         }
         else if (!IsIndexWithinListRange(index))
         {
-            Debug.LogWarning("Deck: Call is out of range. Cannot REMOVE item.");
+            // fail feedback
             return;
         }
 
@@ -176,7 +176,7 @@ public class Deck<T> where T : Card // called a constraint
         if (index >= 0 && index <= _cards.Count - 1)
             return true;
 
-        Debug.LogWarning("Deck: Index out of range;" + " index: " + index);
+        // debug feedback?
         return false;
     }
 }

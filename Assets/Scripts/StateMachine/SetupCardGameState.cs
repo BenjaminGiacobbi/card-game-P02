@@ -22,7 +22,6 @@ public class SetupCardGameState : CardGameState
         StartedSetup?.Invoke();
         // CANT change state while still in Enter/Exit
         // DONT put ChangeState<> here
-        Debug.Log("Setup: Entering...");
         _board.ClearBoard();
         StateMachine.Player.SetDefaults();
         StateMachine.Player.SetupAbilityDeck(_playerAbilityDeck);
@@ -47,7 +46,6 @@ public class SetupCardGameState : CardGameState
 
     public override void Exit()
     {
-        Debug.Log("Setup: Exiting...");
         _nextButton.onClick.RemoveListener(ToBoostState);
         EndedSetup?.Invoke();
     }

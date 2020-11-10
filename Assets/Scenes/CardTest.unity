@@ -1613,7 +1613,7 @@ MonoBehaviour:
   _boostStepPercent: 0.75
   _turnBoostPercent: 0.4
   _prioritizeWeakenedPercent: 0.7
-  _playOpposedPercent: 0.5
+  _playOpposedPercent: 0.6
   _playWeightedPercent: 0.6
   _hpSlider: {fileID: 1865192393}
   _hpText: {fileID: 2031048357}
@@ -4338,12 +4338,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eef79de600bb0f49933850d89918019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerSpace0: {fileID: 876682974}
-  _playerSpace1: {fileID: 1961150794}
-  _playerSpace2: {fileID: 39620699}
-  _enemySpace0: {fileID: 2063737094}
-  _enemySpace1: {fileID: 1512710905}
-  _enemySpace2: {fileID: 1183520365}
+  _player: {fileID: 1752743220}
+  _enemy: {fileID: 327239771}
+  boardPairs:
+  - Player: {fileID: 876682974}
+    Enemy: {fileID: 2063737094}
+  - Player: {fileID: 1961150794}
+    Enemy: {fileID: 1512710905}
+  - Player: {fileID: 39620699}
+    Enemy: {fileID: 1183520365}
 --- !u!1 &1367622001
 GameObject:
   m_ObjectHideFlags: 0
@@ -5934,6 +5937,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _abilityCardPrefab: {fileID: -238864016097307440, guid: 734fc6ea85b81e74daac5afb1e6fe45f,
     type: 3}
+  _deckPosition: {fileID: 774764663}
+  _mainCanvas: {fileID: 2111660079}
+  _player: {fileID: 1752743220}
 --- !u!114 &1827909841
 MonoBehaviour:
   m_ObjectHideFlags: 0

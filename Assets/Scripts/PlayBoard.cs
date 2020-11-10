@@ -9,37 +9,24 @@ public class PlayBoard : MonoBehaviour
     public static PlayerController CurrentPlayer { get; private set; }
     public static EnemyController CurrentEnemy { get; private set; }
 
-    [SerializeField] BoardSpace _playerSpace0 = null;
-    [SerializeField] BoardSpace _playerSpace1 = null;
-    [SerializeField] BoardSpace _playerSpace2 = null;
-    [SerializeField] BoardSpace _enemySpace0 = null;
-    [SerializeField] BoardSpace _enemySpace1 = null;
-    [SerializeField] BoardSpace _enemySpace2 = null;
-
-    public SpacePair[] PairsList = new SpacePair[3];
+    [SerializeField] PlayerController _player = null;
+    [SerializeField] EnemyController _enemy = null;
+    [SerializeField] SpacePair[] boardPairs = null;
+    public SpacePair[] PairsArray
+    { get { return boardPairs; } private set { boardPairs = value; } }
 
 
     private void Awake()
     {
-        CurrentPlayer = FindObjectOfType<PlayerController>();
-        CurrentEnemy = FindObjectOfType<EnemyController>();
-    }
-
-
-    // this could be made more modular in the future
-    private void Start()
-    {
-        PairsList[0] = new SpacePair(_playerSpace0, _enemySpace0);
-        PairsList[1] = new SpacePair(_playerSpace1, _enemySpace1);
-        PairsList[2] = new SpacePair(_playerSpace2, _enemySpace2);
-        Debug.Log(PairsList);
+        CurrentPlayer = _player;
+        CurrentEnemy = _enemy;
     }
 
 
     // TODO add delays and visuals for each battle, calling upon the space/creature's own methods
     public void BattleEnemies()
     {
-        foreach(SpacePair pair in PairsList)
+        foreach(SpacePair pair in PairsArray)
         {
             // damage matchups when opposing slots are filled
             if (pair.Player.Creature && pair.Enemy.Creature)
@@ -81,7 +68,7 @@ public class PlayBoard : MonoBehaviour
 
     public void ClearBoard()
     {
-        foreach (SpacePair pair in PairsList)
+        foreach (SpacePair pair in PairsArray)
         {
             pair.Player.ResetCreatureState();
             pair.Enemy.ResetCreatureState();
@@ -101,10 +88,11 @@ public class PlayBoard : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class SpacePair
 {
-    public BoardSpace Player { get; private set; }
-    public BoardSpace Enemy { get; private set; }
+    public BoardSpace Player;
+    public BoardSpace Enemy;
 
     public SpacePair(BoardSpace player, BoardSpace enemy)
     {

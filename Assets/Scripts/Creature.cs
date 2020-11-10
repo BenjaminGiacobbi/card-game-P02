@@ -79,7 +79,7 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 
     public void Target()
     {
-        Debug.Log("Creature has been targeted.");
+        // targeting feedback
     }
 
     public void BoostHealth(int value)

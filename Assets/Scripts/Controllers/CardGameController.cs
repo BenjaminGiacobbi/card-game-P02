@@ -136,7 +136,7 @@ public class CardGameController : MonoBehaviour, IDamageable, ITargetable, IBoos
         }
         else
         {
-            Debug.Log("Cannot draw more than " + MaxHandSize + " cards!");
+            // draw fail feedback
         }
     }
 
@@ -163,7 +163,6 @@ public class CardGameController : MonoBehaviour, IDamageable, ITargetable, IBoos
         BoostCard lastCard = BoostDeck.TopItem;
         Actions--;
         lastCard.Play();
-        Debug.Log(gameObject.name + " playing Boost Card: " + lastCard.Name);
         // doesn't maintain boost card if it's out of uses
         if (lastCard.Uses == 0)
         {

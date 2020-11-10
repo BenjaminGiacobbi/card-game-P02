@@ -14,7 +14,6 @@ public class HealPlayEffect : CardPlayEffect
         IBoostable boostable = objectToBoost?.GetComponent<IBoostable>();
         if (objectToBoost != null)
         {
-            Debug.Log("Using Boost 2");
             if (_healValue < 0)
                 _healValue = 0;
             boostable.BoostHealth(_healValue);

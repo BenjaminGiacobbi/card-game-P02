@@ -9,13 +9,6 @@ public class TurnResultsCardGameState : CardGameState
     [SerializeField] float _waitTime = 4f;
     [SerializeField] Text _resultsText = null;
     private float timer = 0;
-    // receives input from the board's command invoker?
-
-    // allows commands to play
-
-    // exits upon commands finish (no player input in this state, just showing battle results
-
-    // short delay() between calling command execute
 
     private void Start()
     {
@@ -56,6 +49,5 @@ public class TurnResultsCardGameState : CardGameState
     public override void Exit()
     {
         _resultsText.gameObject.SetActive(false);
-        Debug.Log("Setup: Exiting...");
     }
 }

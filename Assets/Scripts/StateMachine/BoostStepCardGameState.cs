@@ -25,13 +25,11 @@ public class BoostStepCardGameState : CardGameState
         _useBoostButton.gameObject.SetActive(true);
         StateMachine.Player.OnTurn();
         StateMachine.Enemy.OnTurn();
-        Debug.Log("Boost: ...Entering");
         StartedBoostStep?.Invoke();
     }
 
     public override void Exit()
     {
-        Debug.Log("Boost: Exiting...");
         _useBoostButton.onClick.RemoveListener(Boost);
         _skipBoostButton.onClick.RemoveListener(ToPlayerTurn);
         EndedBoostStep?.Invoke();
@@ -45,10 +43,8 @@ public class BoostStepCardGameState : CardGameState
         StateMachine.Player.PlayBoostCard();
 
         // this sequence sets target internally
-        Debug.Log("Point 1");
         StateMachine.Enemy.BoostAction(1);
         StateMachine.Enemy.BoostStepSequence();
-        Debug.Log("Point 2");
         ToPlayerTurn();
     }
 

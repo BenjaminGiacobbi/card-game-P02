@@ -15,20 +15,17 @@ public class EnemyTurnCardGameState : CardGameState
 
     public override void Enter()
     {
-        Debug.Log("Enemy Turn: ...Enter");
         EnemyTurnBegan?.Invoke();
         StartCoroutine(EnemyThinkingRoutine(_pauseDuration));
     }
 
     public override void Exit()
     {
-        Debug.Log("Enemy Turn: Exit...");
         EnemyTurnEnded?.Invoke();
     }
 
     IEnumerator EnemyThinkingRoutine(float duration)
     {
-        Debug.Log("Enemy Thinking...");
         yield return new WaitForSeconds(duration / 2);
 
         _enemy.EnemyThinkSequence();
