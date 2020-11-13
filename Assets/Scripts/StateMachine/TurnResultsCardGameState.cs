@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class TurnResultsCardGameState : CardGameState
 {
     [SerializeField] PlayBoard _board = null;
-    [SerializeField] float _waitTime = 4f;
+    [SerializeField] CommandInvoker _boardInvoker = null;
+    [SerializeField] float _delayTime = 2f;
     [SerializeField] Text _resultsText = null;
     private float timer = 0;
 
@@ -17,33 +18,42 @@ public class TurnResultsCardGameState : CardGameState
 
     public override void Enter()
     {
-        _board.BattleEnemies();
+        // some code to move into this state
         _resultsText.text = "Results...";
         _resultsText.gameObject.SetActive(true);
-        timer = _waitTime;
+        StartCoroutine(BattleRoutine());
     }
 
-    public override void Tick()
+    IEnumerator BattleRoutine()
     {
-        if(timer > 0)
-        { 
-            timer -= Time.deltaTime;
-            if (timer <= 0)
-            {
-                timer = 0;
+        // populates command queue
+        _board.BattleCommands();
 
-                if (StateMachine.Enemy.CurrentHealth <= 0 || StateMachine.Enemy.BoostDeck.Count == 0)
-                {
-                    StateMachine.ChangeState<PlayerWinCardGameState>();
-                }
-                else if (StateMachine.Player.CurrentHealth <= 0 || StateMachine.Player.BoostDeck.Count == 0)
-                {
-                    StateMachine.ChangeState<PlayerLoseCardGameState>();
-                }
-                else
-                    StateMachine.ChangeState<BoostStepCardGameState>();
-            }   
+        // cycles through queue
+        int count = _boardInvoker.CommandQueue.Count;
+        for (int i = 0; i < count; i ++)
+        {
+            _boardInvoker.PlayTopCommand();
+            yield return new WaitForSeconds(_delayTime);
+
+            if (StateMachine.Enemy.CurrentHealth <= 0)
+            {
+                StateMachine.ChangeState<PlayerWinCardGameState>();
+                _boardInvoker.CommandQueue.Clear();
+            }
+            else if (StateMachine.Player.CurrentHealth <= 0)
+            {
+                StateMachine.ChangeState<PlayerLoseCardGameState>();
+                _boardInvoker.CommandQueue.Clear();
+            }
+            
         }
+        if (StateMachine.Player.BoostDeck.Count == 0)
+            StateMachine.ChangeState<PlayerLoseCardGameState>();
+        else if (StateMachine.Enemy.BoostDeck.Count == 0)
+            StateMachine.ChangeState<PlayerWinCardGameState>();
+        else
+            StateMachine.ChangeState<BoostStepCardGameState>();
     }
 
     public override void Exit()

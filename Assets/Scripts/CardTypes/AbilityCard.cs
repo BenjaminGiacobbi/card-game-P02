@@ -20,6 +20,6 @@ public class AbilityCard : Card
 
     public override void Play()
     {
-        PlayEffect.Activate(PlayBoard.CurrentTarget);
+        PlayEffect.Activate(TargetController.CurrentTarget);
     }
 }

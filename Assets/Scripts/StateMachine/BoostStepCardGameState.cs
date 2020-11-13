@@ -11,7 +11,6 @@ public class BoostStepCardGameState : CardGameState
 
     [SerializeField] Button _useBoostButton = null;
     [SerializeField] Button _skipBoostButton = null;
-    [SerializeField] PlayBoard _board = null;
 
     private void Start()
     {
@@ -38,7 +37,7 @@ public class BoostStepCardGameState : CardGameState
     private void Boost()
     {
         // access player controller and tell it to use top boost card/update whatever it needs
-        _board.SetTargetToPlayer();
+        TargetController.SetTargetToPlayer();
         StateMachine.Player.BoostAction(1);   
         StateMachine.Player.PlayBoostCard();
 

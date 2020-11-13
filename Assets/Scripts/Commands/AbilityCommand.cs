@@ -17,7 +17,7 @@ public class AbilityCommand : ICommand
 
     public void Execute()
     {
-        PlayBoard.CurrentTarget = _target;
+        TargetController.CurrentTarget = _target;
         _controller.PlayAbilityCard(_handIndex);
     }
 }

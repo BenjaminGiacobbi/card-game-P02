@@ -15,7 +15,7 @@ public class BoostCommand : ICommand
 
     public void Execute()
     {
-        PlayBoard.CurrentTarget = _target;
+        TargetController.CurrentTarget = _target;
         _controller.PlayBoostCard();
     }
 }

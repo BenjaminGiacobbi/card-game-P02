@@ -9,6 +9,7 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     public event Action<int> HealthSet = delegate { };
     public event Action<int> ActionSet = delegate { };
     public event Action<float> DefenseSet = delegate { };
+    public event Action Attack = delegate { };
 
     [SerializeField] int _baseHealth = 10;
     public int BaseHealth { get { return _baseHealth; } private set { _baseHealth = value; } }
@@ -69,11 +70,9 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
         IDamageable damageable = targetObject?.GetComponent<IDamageable>();
         if (damageable != null)
         {
-            for (int i = 0; i < CurrentActions; i++)
-            {
-                damageable.TakeDamage(AttackDamage);
-                // play visual/audio feedback
-            }
+            Attack?.Invoke();
+            damageable.TakeDamage(AttackDamage);
+            // play visual/audio feedback
         }
     }
 

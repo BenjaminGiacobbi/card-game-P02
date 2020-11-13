@@ -7,6 +7,8 @@ using UnityEngine.UI;
 public class CreatureUI : MonoBehaviour
 {
     [SerializeField] GameObject _uiGroup = null;
+    [SerializeField] ParticleSystem _attackParticles = null;
+    [SerializeField] AudioClip _attackAudio = null;
     [SerializeField] Slider _hpSlider = null;
     [SerializeField] Text _hpText = null;
     [SerializeField] Text _actionText = null;
@@ -14,6 +16,7 @@ public class CreatureUI : MonoBehaviour
     [SerializeField] Text _attackText = null;
 
     private Creature _attachedCreature = null;
+    private Vector3 _startingPosition = Vector3.zero;
 
     private void Awake()
     {
@@ -25,6 +28,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.HealthSet += UpdateHealthDisplay;
         _attachedCreature.ActionSet += UpdateActionText;
         _attachedCreature.DefenseSet += UpdateDefenseText;
+        _attachedCreature.Attack += AttackAnimation;
     }
 
     private void OnDisable()
@@ -32,6 +36,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.HealthSet -= UpdateHealthDisplay;
         _attachedCreature.ActionSet -= UpdateActionText;
         _attachedCreature.DefenseSet -= UpdateDefenseText;
+        _attachedCreature.Attack -= AttackAnimation;
     }
 
     private void Start()
@@ -40,6 +45,7 @@ public class CreatureUI : MonoBehaviour
         _hpSlider.maxValue = _attachedCreature.BaseHealth;
         _attackText.text = "Atk: " + _attachedCreature.AttackDamage;
         _uiGroup.transform.rotation = Quaternion.Euler(_uiGroup.transform.rotation.x, 0, _uiGroup.transform.rotation.z);
+        _startingPosition = transform.position;
     }
 
     private void UpdateHealthDisplay(int healthValue)
@@ -60,5 +66,19 @@ public class CreatureUI : MonoBehaviour
     private void UpdateDefenseText(float defenseValue)
     {
         _defenseText.text = "Def: " + ((1.0f / defenseValue) * 100) + "%";
+    }
+
+    private void AttackAnimation()
+    {
+        LeanTween.move(gameObject, (_startingPosition + (2 * transform.forward)), 0.3f).setEaseInOutBack().setOnComplete(ReturnAnimation);
+        if(_attackParticles != null)
+            _attackParticles.Play();
+        if (_attackAudio != null)
+            AudioHelper.PlayClip2D(_attackAudio, 0.5f);
+    }
+
+    private void ReturnAnimation()
+    {
+        LeanTween.move(gameObject, _startingPosition, 0.15f);
     }
 }

@@ -20,7 +20,7 @@ public class BoostCard : Card
     {
         if (Uses > 0)
         {
-            PlayEffect.Activate(PlayBoard.CurrentTarget);
+            PlayEffect.Activate(TargetController.CurrentTarget);
             Uses--;
         }
     }

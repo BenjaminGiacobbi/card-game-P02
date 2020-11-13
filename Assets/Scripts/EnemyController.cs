@@ -91,7 +91,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         if(BoostDeck.Count > 0)
         {
             // play boost command
-            if (RollChance(_boostStepPercent))
+            if (RollChance(_boostStepPercent) && !BoostDeck.IsEmpty)
             {
                 _invoker.ExecuteCommand(new BoostCommand(this, GetComponent<ITargetable>()));
             }
@@ -135,9 +135,9 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             int creatureCount = CollectCreatureInfo();
 
             // first decide whether or not to use boost card (chance on if creatures or always on MAX creatures)
-            if ((creatureCount > 0 && _playableHand.Count == 0) ||
+            if (((creatureCount > 0 && _playableHand.Count == 0) ||
                 (creatureCount > 0 && RollChance(_turnBoostPercent)) || 
-                creatureCount == _board.PairsArray.Length)
+                creatureCount == _board.PairsArray.Length) && !BoostDeck.IsEmpty)
             {
                 PlayRandomBoost();
                 continue;

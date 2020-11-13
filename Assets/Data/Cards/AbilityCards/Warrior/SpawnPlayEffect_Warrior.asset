@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79828abb26947d7408051a02ae5a434b, type: 3}
   m_Name: SpawnPlayEffect_Warrior
   m_EditorClassIdentifier: 
+  _spawnParticles: {fileID: 7252259870052783640, guid: f5ae803f4d8f7be4ab321438698410a5,
+    type: 3}
+  _spawnAudio: {fileID: 8300000, guid: 00dbfe82076c7dd4f8f62cd7ff479a45, type: 3}
   _creatureToSpawn: {fileID: 5429463800576471595, guid: c42f275bd1da87e4584de6f14711bb41,
     type: 3}

@@ -9,6 +9,11 @@ public class BoardSpace : MonoBehaviour, ITargetable
     public Transform SpawnLocation { get { return _spawnLocation; } private set { _spawnLocation = value; } }
     public Creature Creature { get; set; } = null;
 
+    private void Start()
+    {
+        // _spawnParticles.transform.position = new Vector3(_spawnLocation.position.x, _spawnLocation.position.y + 0.05f, _spawnLocation.position.z);
+    }
+
     public bool UseCard(AbilityCard card)
     {
         SpawnPlayEffect spawnEffect = card.PlayEffect as SpawnPlayEffect;
@@ -16,13 +21,16 @@ public class BoardSpace : MonoBehaviour, ITargetable
         {
             if (Creature)
             {
-                // feedback for vailing to place card
+                // feedback for failing to place card
+                // if (_failAudio)
+                    // AudioHelper.PlayClip2D(_failAudio, 0.7f);
                 return false;
             }
 
             // this is hard to debug because card.Play()'s use of the play effect depends on CurrentTarget
-            PlayBoard.CurrentTarget = GetComponent<ITargetable>();
+            TargetController.CurrentTarget = GetComponent<ITargetable>();
             card.Play();
+
             return true;
         }
         else
@@ -31,7 +39,7 @@ public class BoardSpace : MonoBehaviour, ITargetable
             {
                 return false;
             }
-            PlayBoard.CurrentTarget = Creature.gameObject.GetComponent<ITargetable>();
+            TargetController.CurrentTarget = Creature.gameObject.GetComponent<ITargetable>();
             card.Play();
             return true;
         }

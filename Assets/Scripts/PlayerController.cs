@@ -95,7 +95,7 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
                 if (boostable != null)
                 {
                     ITargetable boostTarget = boostable as ITargetable;
-                    PlayBoard.CurrentTarget = boostTarget;
+                    TargetController.CurrentTarget = boostTarget;
                     PlayBoostCard();
 
                     _boostRoutine = null;
@@ -103,7 +103,7 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
                 }
                 else if (hit.collider?.gameObject.layer == LayerMask.NameToLayer("PlayerTarget"))
                 {
-                    PlayBoard.CurrentTarget = GetComponent<ITargetable>();
+                    TargetController.CurrentTarget = GetComponent<ITargetable>();
                     PlayBoostCard();
 
                     EndedSelection?.Invoke();

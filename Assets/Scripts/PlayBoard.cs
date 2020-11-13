@@ -2,66 +2,93 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(CommandInvoker))]
 public class PlayBoard : MonoBehaviour
 {
-    // TODO built a more structured connection, maybe singleton?
-    public static ITargetable CurrentTarget { get; set; }
-    public static PlayerController CurrentPlayer { get; private set; }
-    public static EnemyController CurrentEnemy { get; private set; }
-
-    [SerializeField] PlayerController _player = null;
-    [SerializeField] EnemyController _enemy = null;
     [SerializeField] SpacePair[] boardPairs = null;
     public SpacePair[] PairsArray
     { get { return boardPairs; } private set { boardPairs = value; } }
 
+    private CommandInvoker _invoker = null;
+
 
     private void Awake()
     {
-        CurrentPlayer = _player;
-        CurrentEnemy = _enemy;
+        _invoker = GetComponent<CommandInvoker>();
     }
 
 
     // TODO add delays and visuals for each battle, calling upon the space/creature's own methods
-    public void BattleEnemies()
+    public void BattleCommands()
     {
         foreach(SpacePair pair in PairsArray)
         {
             // damage matchups when opposing slots are filled
             if (pair.Player.Creature && pair.Enemy.Creature)
             {
-                // prioritizes the presumed winning opponent, otherwise if both survive, the player goes first
-                // TODO increase complexity so attacks actually happen in sequence rather than all at once, as of now Actions is just damage boosts
-                int predictPlayerHP = pair.Player.Creature.CurrentHealth - 
-                    pair.Enemy.Creature.AttackDamage * pair.Enemy.Creature.CurrentActions;
-                int predictEnemyHP = pair.Enemy.Creature.CurrentHealth - 
-                    pair.Player.Creature.AttackDamage * pair.Player.Creature.CurrentActions;
+                // gets battle information
+                int predictPlayerHP = pair.Player.Creature.CurrentHealth - Mathf.CeilToInt(
+                    pair.Enemy.Creature.AttackDamage * pair.Player.Creature.DefenseModifier) * pair.Enemy.Creature.CurrentActions;
+                int predictEnemyHP = pair.Enemy.Creature.CurrentHealth - Mathf.CeilToInt(
+                    pair.Player.Creature.AttackDamage * pair.Enemy.Creature.DefenseModifier) * pair.Player.Creature.CurrentActions;
 
-                if(predictPlayerHP > 0 || (predictPlayerHP <= 0 && predictEnemyHP <= 0))
+                // sets a priority attacker
+                Creature priorityAttacker = null;
+                Creature secondaryAttacker = null;
+
+                if (pair.Player.Creature.CurrentActions >= pair.Enemy.Creature.CurrentActions)
                 {
-                    CurrentTarget = pair.Enemy.Creature.GetComponent<ITargetable>();
-                    pair.Player.Creature.ApplyDamage(CurrentTarget);
+                    priorityAttacker = pair.Player.Creature;
+                    secondaryAttacker = pair.Enemy.Creature;
+                }   
+                else
+                {
+                    priorityAttacker = pair.Enemy.Creature;
+                    secondaryAttacker = pair.Player.Creature;
                 }
-                if(predictPlayerHP <= 0 || (predictPlayerHP > 0 && predictEnemyHP > 0))
+
+                // targets for simplicity
+                ITargetable priorityTarget = priorityAttacker.GetComponent<ITargetable>();
+                ITargetable secondaryTarget = secondaryAttacker.GetComponent<ITargetable>();
+                int trackSecondaryHP = secondaryAttacker.CurrentHealth;
+
+                // adds alternating actions for battle
+                int j = 0;
+                for (int i = 0; i < priorityAttacker.CurrentActions; i++)
                 {
-                    CurrentTarget = pair.Player.Creature.GetComponent<ITargetable>();
-                    pair.Enemy.Creature.ApplyDamage(CurrentTarget);
+                    Debug.Log("Generating Priority Command" + i);
+                    _invoker.AddCommandToQueue(new AttackCommand(priorityAttacker, secondaryTarget));
+
+                    trackSecondaryHP -= Mathf.CeilToInt(priorityAttacker.AttackDamage * secondaryAttacker.DefenseModifier);
+                    if (trackSecondaryHP <= 0)
+                        break;
+
+                    if(j < secondaryAttacker.CurrentActions)
+                    {
+                        _invoker.AddCommandToQueue(new AttackCommand(secondaryAttacker, priorityTarget));
+                        j++;
+                    }
                 }
             }
 
             // when player slot only is filled
             else if (pair.Player.Creature && !pair.Enemy.Creature)
-            { 
-                SetTargetToEnemy();
-                pair.Player.Creature.ApplyDamage(CurrentTarget);
+            {
+                for (int i = 0; i < pair.Player.Creature.CurrentActions; i++)
+                {
+                    Debug.Log("Generating Command" + i);
+                    _invoker.AddCommandToQueue(new AttackCommand(pair.Player.Creature, TargetController.CurrentEnemy));
+                }
             }
 
             // when enemy slot only is filled
             else if (!pair.Player.Creature && pair.Enemy.Creature)
             {
-                SetTargetToPlayer();
-                pair.Enemy.Creature.ApplyDamage(CurrentTarget);
+                for (int i = 0; i < pair.Enemy.Creature.CurrentActions; i++)
+                {
+                    Debug.Log("Generating Command" + i);
+                    _invoker.AddCommandToQueue(new AttackCommand(pair.Enemy.Creature, TargetController.CurrentPlayer));
+                }
             }
         }
     }
@@ -74,22 +101,10 @@ public class PlayBoard : MonoBehaviour
             pair.Enemy.ResetCreatureState();
         }
     }
-
-
-    public void SetTargetToPlayer()
-    {
-        CurrentTarget = CurrentPlayer.GetComponent<ITargetable>();
-    }
-
-
-    public void SetTargetToEnemy()
-    {
-        CurrentTarget = CurrentEnemy.GetComponent<ITargetable>();
-    }
 }
 
 [System.Serializable]
-public class SpacePair
+public struct SpacePair
 {
     public BoardSpace Player;
     public BoardSpace Enemy;
