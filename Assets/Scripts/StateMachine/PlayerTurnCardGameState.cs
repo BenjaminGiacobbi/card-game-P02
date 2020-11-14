@@ -8,14 +8,10 @@ public class PlayerTurnCardGameState : CardGameState
     public static event Action EndedPlayerTurn = delegate { };
 
     [SerializeField] Button _nextButton = null;
-    [SerializeField] Button _winButton = null;
-    [SerializeField] Button _loseButton = null;
 
     public override void Enter()
     {
         _nextButton.onClick.AddListener(OnPressedConfirm);
-        _winButton.onClick.AddListener(ProceedToWin);
-        _loseButton.onClick.AddListener(ProceedToLose);
         StartedPlayerTurn?.Invoke();
     }
 

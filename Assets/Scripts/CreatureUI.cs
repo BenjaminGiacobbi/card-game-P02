@@ -8,7 +8,9 @@ public class CreatureUI : MonoBehaviour
 {
     [SerializeField] GameObject _uiGroup = null;
     [SerializeField] ParticleSystem _attackParticles = null;
+    [SerializeField] ParticleSystem _boostParticles = null;
     [SerializeField] AudioClip _attackAudio = null;
+    [SerializeField] AudioClip _boostAudio;
     [SerializeField] Slider _hpSlider = null;
     [SerializeField] Text _hpText = null;
     [SerializeField] Text _actionText = null;
@@ -29,6 +31,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.ActionSet += UpdateActionText;
         _attachedCreature.DefenseSet += UpdateDefenseText;
         _attachedCreature.Attack += AttackAnimation;
+        _attachedCreature.Boosted += BoostFeedback;
     }
 
     private void OnDisable()
@@ -37,6 +40,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.ActionSet -= UpdateActionText;
         _attachedCreature.DefenseSet -= UpdateDefenseText;
         _attachedCreature.Attack -= AttackAnimation;
+        _attachedCreature.Boosted -= BoostFeedback;
     }
 
     private void Start()
@@ -56,29 +60,47 @@ public class CreatureUI : MonoBehaviour
             _hpSlider.maxValue = _attachedCreature.BaseHealth;
         _hpSlider.value = healthValue;
         _hpText.text = healthValue.ToString();
+        AnimateTextFlash(_hpText);
     }
 
     private void UpdateActionText(int actionValue)
     {
         _actionText.text = "Act: " + actionValue;
+        AnimateTextFlash(_actionText);
     }
 
     private void UpdateDefenseText(float defenseValue)
     {
         _defenseText.text = "Def: " + ((1.0f / defenseValue) * 100) + "%";
+        AnimateTextFlash(_defenseText);
+    }
+
+    private void BoostFeedback()
+    {
+        if (_boostAudio)
+            AudioHelper.PlayClip2D(_boostAudio, 0.5f);
     }
 
     private void AttackAnimation()
     {
-        LeanTween.move(gameObject, (_startingPosition + (2 * transform.forward)), 0.3f).setEaseInOutBack().setOnComplete(ReturnAnimation);
+        LeanTween.move(gameObject, (_startingPosition + (2 * transform.forward)), 0.3f).setEaseInOutBack().setOnComplete(
+            () => { LeanTween.move(gameObject, _startingPosition, 0.15f); });
         if(_attackParticles != null)
             _attackParticles.Play();
         if (_attackAudio != null)
             AudioHelper.PlayClip2D(_attackAudio, 0.5f);
     }
 
-    private void ReturnAnimation()
+    private void AnimateTextFlash(Text text)
     {
-        LeanTween.move(gameObject, _startingPosition, 0.15f);
+        Color tempColor = text.color;
+        RectTransform rect = text.GetComponent<RectTransform>();
+        LeanTween.colorText(rect, Color.white, 0.1f).setOnComplete(
+            () => { LeanTween.colorText(rect, tempColor, 0.1f); });
+    }
+
+    private void AnimateHealthBar()
+    {
+
     }
 }

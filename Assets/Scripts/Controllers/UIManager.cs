@@ -14,10 +14,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] Text _enemyThinkingText = null;
     [SerializeField] Text _playerTurnText = null;
 
-    [SerializeField] GameObject _testObject = null;
+    [SerializeField] BoostCardView _boostCardPrefab = null;
+    [SerializeField] AbilityCardView _abilityCardPrefab = null;
     [SerializeField] GameObject _menuPanel = null;
     [SerializeField] GameObject _setupPanel = null;
-    [SerializeField] GameObject _boostPanel = null;
+    [SerializeField] GameObject _boostStepPanel = null;
     [SerializeField] GameObject _mainPlayerPanel = null;
     [SerializeField] GameObject _losePanel = null;
     [SerializeField] GameObject _winPanel = null;
@@ -32,7 +33,10 @@ public class UIManager : MonoBehaviour
     IDeckView<AbilityCard> _discardDeckView = null;
     IDeckView<AbilityCard> _mainDeckView = null;
     IDeckView<BoostCard> _boostDeckView = null;
+    IDeckView<BoostCard> _boostStepView = null;
 
+    private GameObject _abilityObject;
+    private GameObject _boostObject;
     int _playerTurnCount = 0;
 
     private void OnEnable()
@@ -45,6 +49,7 @@ public class UIManager : MonoBehaviour
         SetupCardGameState.EndedSetup += HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep += ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep += HideBoostStep;
+        BoostStepCardGameState.BoostCardChosen -= AnimateBoostStep;
         PlayerTurnCardGameState.StartedPlayerTurn += ShowMainPanel;
         PlayerTurnCardGameState.StartedPlayerTurn += UpdateTurnDisplay;
         PlayerTurnCardGameState.EndedPlayerTurn += HideMainPanel;
@@ -76,8 +81,9 @@ public class UIManager : MonoBehaviour
         SetupCardGameState.EndedSetup -= HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep -= ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep -= HideBoostStep;
+        BoostStepCardGameState.BoostCardChosen -= AnimateBoostStep;
         PlayerTurnCardGameState.StartedPlayerTurn -= ShowMainPanel;
-        PlayerTurnCardGameState.StartedPlayerTurn += UpdateTurnDisplay;
+        PlayerTurnCardGameState.StartedPlayerTurn -= UpdateTurnDisplay;
         PlayerTurnCardGameState.EndedPlayerTurn -= HideMainPanel;
         EnemyTurnCardGameState.EnemyTurnBegan -= OnEnemyTurnBegan;
         EnemyTurnCardGameState.EnemyTurnEnded -= OnEnemyTurnEnded;
@@ -103,22 +109,31 @@ public class UIManager : MonoBehaviour
         _discardDeckView = _discardDeckPanel.GetComponent<IDeckView<AbilityCard>>();
         _mainDeckView = _mainDeckPanel.GetComponent<IDeckView<AbilityCard>>();
         _boostDeckView = _boostDeckPanel.GetComponent<IDeckView<BoostCard>>();
+        _boostStepView = _boostStepPanel.GetComponent<IDeckView<BoostCard>>();
     }
 
     private void Start()
     {
-        _testObject = Instantiate(_testObject, transform);
-        _testObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        _testObject.transform.SetAsLastSibling();
-        _testObject.SetActive(false);
+        _abilityObject = Instantiate(_abilityCardPrefab.gameObject, transform);
+        _abilityObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        _abilityObject.GetComponent<Button>().interactable = false;
+        _boostObject = Instantiate(_boostCardPrefab.gameObject, transform);
+        _boostObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        _boostObject.GetComponent<Button>().interactable = false;
+        _abilityObject.SetActive(false);
+        _boostObject.SetActive(false);
         _playerTurnText.gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        if (_testObject.activeSelf == true)
+        if (_abilityObject.activeSelf == true)
         {
-            _testObject.transform.position = Input.mousePosition;
+            _abilityObject.transform.position = Input.mousePosition;
+        }
+        if (_boostObject.activeSelf == true)
+        {
+            _boostObject.transform.position = Input.mousePosition;
         }
     }
 
@@ -182,22 +197,31 @@ public class UIManager : MonoBehaviour
     private void ShowSetupGraphics()
     {
         _setupPanel.SetActive(true);
+        _boostStepPanel.SetActive(true);
+        _mainPlayerPanel.SetActive(true);
     }
 
     private void HideSetupGraphics()
     {
         _setupPanel.SetActive(false);
+        _boostStepPanel.SetActive(false);
+        _mainPlayerPanel.SetActive(false);
     }
 
     private void ShowBoostStep()
     {
-        _boostPanel.SetActive(true);
-        _boostPanel.GetComponent<IDeckView<BoostCard>>()?.ShowDeck(_player.BoostDeck);
+        _boostStepPanel.SetActive(true);
+        _boostStepPanel.GetComponent<IDeckView<BoostCard>>()?.ShowDeck(_player.BoostDeck);
     }
 
     private void HideBoostStep()
     {
-        _boostPanel.SetActive(false);
+        _boostStepPanel.SetActive(false);
+    }
+
+    private void AnimateBoostStep()
+    {
+        _boostStepView.ShowDeck(_player.BoostDeck);
     }
 
     private void ShowMainPanel()
@@ -244,12 +268,24 @@ public class UIManager : MonoBehaviour
 
     private void ShowSelectedGraphic(Card selectedCard)
     {
-        // TODO add paths here to activate a boostCardView or an abilityCardView based on card type
-        _testObject.SetActive(true);
+        BoostCard boostCard = selectedCard as BoostCard;
+        if(boostCard != null)
+        {
+            _boostObject.GetComponent<BoostCardView>().Display(boostCard);
+            _boostObject.SetActive(true);
+        }
+
+        AbilityCard abilityCard = selectedCard as AbilityCard;
+        if(abilityCard != null)
+        {
+            _abilityObject.GetComponent<AbilityCardView>().Display(abilityCard);
+            _abilityObject.SetActive(true);
+        }
     }
 
     private void HideSelectedGraphic()
     {
-        _testObject.SetActive(false);
+        _abilityObject.SetActive(false);
+        _boostObject.SetActive(false);
     }
 }

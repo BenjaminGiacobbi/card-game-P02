@@ -9,6 +9,7 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
     [SerializeField] Transform _deckPosition = null;
     [SerializeField] Canvas _mainCanvas = null;
     [SerializeField] PlayerController _player = null;
+    [SerializeField] AudioClip _drawAudio = null;
     private HandItem[] _handItems = null;
     private GridLayoutGroup _gridLayout = null;
     private int _lastCount = 0;
@@ -37,6 +38,8 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
             _handItems[i] = new HandItem(obj.GetComponent<AbilityCardView>(), obj.GetComponent<Button>(), i, this);
             Debug.Log(_handItems[i].Obj.transform.position);
         }
+
+        // animation object is a copy of the ability view
         _animObject = Instantiate(_abilityCardPrefab.gameObject, _mainCanvas.transform);
         _animObject.SetActive(false);
         RectTransform rect = _animObject.GetComponent<RectTransform>();
@@ -78,8 +81,13 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
                 _animObject.transform.position = _deckPosition.position;
                 _animObject.SetActive(true);
                 LeanTween.move(_animObject, endPosition, 0.25f).setOnComplete(() => { FinishAnimation(currentObject); });
-                LeanTween.size(_animObject.GetComponent<RectTransform>(), new Vector3(_gridLayout.cellSize.x, _gridLayout.cellSize.y, 1), 0.25f);
+
+                RectTransform rect = _animObject.GetComponent<RectTransform>();
+                LeanTween.size(rect, new Vector3(_gridLayout.cellSize.x, _gridLayout.cellSize.y, 1), 0.25f).setOnComplete(
+                    () => { rect.sizeDelta.Set(_animStartSize.x, _animStartSize.y); } );
             }
+            if (_drawAudio)
+                AudioHelper.PlayClip2D(_drawAudio, 0.5f);
         }
         _lastCount = deck.Count;
     }
@@ -87,7 +95,7 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
     public void FinishAnimation(GameObject obj)
     {
         _animObject.SetActive(false);
-        _animObject.GetComponent<RectTransform>().sizeDelta.Set(_animStartSize.x, _animStartSize.y);
+        
         obj.SetActive(true);
     }
 

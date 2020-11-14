@@ -5920,7 +5920,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiGroup: {fileID: 1747771022826118855}
   _attackParticles: {fileID: 2006784651870853731}
+  _boostParticles: {fileID: 0}
   _attackAudio: {fileID: 8300000, guid: 2a469099272500947acf6d92e4792267, type: 3}
+  _boostAudio: {fileID: 8300000, guid: b5956908ff2781644899c4f55c53b6e0, type: 3}
   _hpSlider: {fileID: 4290608624375554262}
   _hpText: {fileID: 6278045826953704645}
   _actionText: {fileID: 5648079793568121425}

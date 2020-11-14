@@ -330,7 +330,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiGroup: {fileID: 1534029654580431064}
   _attackParticles: {fileID: 6323088800430297796}
+  _boostParticles: {fileID: 0}
   _attackAudio: {fileID: 8300000, guid: 2a469099272500947acf6d92e4792267, type: 3}
+  _boostAudio: {fileID: 8300000, guid: b5956908ff2781644899c4f55c53b6e0, type: 3}
   _hpSlider: {fileID: 1045235550462256980}
   _hpText: {fileID: 2096558345638500442}
   _actionText: {fileID: 741712270302884278}

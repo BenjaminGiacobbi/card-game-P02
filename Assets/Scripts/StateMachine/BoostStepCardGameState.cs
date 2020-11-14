@@ -8,6 +8,7 @@ public class BoostStepCardGameState : CardGameState
 {
     public static event Action StartedBoostStep = delegate { };
     public static event Action EndedBoostStep = delegate { };
+    public static event Action BoostCardChosen = delegate { };
 
     [SerializeField] Button _useBoostButton = null;
     [SerializeField] Button _skipBoostButton = null;
@@ -40,15 +41,20 @@ public class BoostStepCardGameState : CardGameState
         TargetController.SetTargetToPlayer();
         StateMachine.Player.BoostAction(1);   
         StateMachine.Player.PlayBoostCard();
-
-        // this sequence sets target internally
-        StateMachine.Enemy.BoostAction(1);
-        StateMachine.Enemy.BoostStepSequence();
-        ToPlayerTurn();
+        StartCoroutine(PlayerTurnRoutine());
     }
 
     private void ToPlayerTurn()
     {
+        StateMachine.Enemy.BoostAction(1);
+        StateMachine.Enemy.BoostStepSequence();
         StateMachine.ChangeState<PlayerTurnCardGameState>();
+    }
+
+    IEnumerator PlayerTurnRoutine()
+    {
+        BoostCardChosen.Invoke();
+        yield return new WaitForSeconds(0.8f);
+        ToPlayerTurn();
     }
 }

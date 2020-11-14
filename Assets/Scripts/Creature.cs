@@ -10,6 +10,7 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     public event Action<int> ActionSet = delegate { };
     public event Action<float> DefenseSet = delegate { };
     public event Action Attack = delegate { };
+    public event Action Boosted = delegate { };
 
     [SerializeField] int _baseHealth = 10;
     public int BaseHealth { get { return _baseHealth; } private set { _baseHealth = value; } }
@@ -85,17 +86,20 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     {
         CurrentHealth += value;
         HealthSet?.Invoke(CurrentHealth);
+        Boosted?.Invoke();
     }
 
     public void BoostAction(int value)
     {
         CurrentActions += value;
         ActionSet?.Invoke(CurrentActions);
+        Boosted?.Invoke();
     }
 
     public void BoostDefense(float modifier)
     {
         DefenseModifier = modifier;
         DefenseSet?.Invoke(DefenseModifier);
+        Boosted?.Invoke();
     }
 }
