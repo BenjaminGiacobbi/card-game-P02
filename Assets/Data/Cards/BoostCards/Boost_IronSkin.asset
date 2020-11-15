@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Boost_IronSkin
   m_EditorClassIdentifier: 
   _name: Iron Skin
+  _description: Boosts defense by 30%.
   _uses: 2
   _graphic: {fileID: 21300000, guid: 430cd28cf9d268d4ba1997becc6f8cea, type: 3}
   _playEffect: {fileID: 11400000, guid: e461012e1b92c14458b990ba0cf96f83, type: 2}

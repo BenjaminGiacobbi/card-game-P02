@@ -40,11 +40,13 @@ public class TurnResultsCardGameState : CardGameState
             {
                 StateMachine.ChangeState<PlayerWinCardGameState>();
                 _boardInvoker.CommandQueue.Clear();
+                yield break;
             }
             else if (StateMachine.Player.CurrentHealth <= 0)
             {
                 StateMachine.ChangeState<PlayerLoseCardGameState>();
                 _boardInvoker.CommandQueue.Clear();
+                yield break;
             }
             
         }

@@ -24,8 +24,6 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
     [Header("Rate AI will prioritize monsters with high average stats")]
     [SerializeField] float _playWeightedPercent = 0.60f;
 
-    [SerializeField] Slider _hpSlider = null;
-    [SerializeField] Text _hpText = null;
     CommandInvoker _invoker = null;
     bool[,] _spaceMatrix = null;
     List<int> _playableHand = null;
@@ -38,30 +36,8 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
     public override void SetDefaults()
     {
         base.SetDefaults();
-        _hpSlider.minValue = 0;
-        _hpSlider.maxValue = _maxHealth;
-        _hpSlider.value = CurrentHealth;
-        _hpText.text = CurrentHealth.ToString();
         _spaceMatrix = new bool[_board.PairsArray.Length, 2];
         ClearSpaceMatrix();
-    }
-
-
-    public override void TakeDamage(int damage)
-    {
-        base.TakeDamage(damage);
-        _hpSlider.value = CurrentHealth;
-        _hpText.text = CurrentHealth.ToString();
-    }
-
-    public override void BoostHealth(int value)
-    {
-        base.BoostHealth(value);
-        if (CurrentHealth > _maxHealth)
-            _hpSlider.maxValue = CurrentHealth;
-        else
-            _hpSlider.maxValue = _maxHealth;
-        _hpSlider.value = CurrentHealth;
     }
 
     private bool RollChance(float percentChance)
@@ -94,6 +70,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             if (RollChance(_boostStepPercent) && !BoostDeck.IsEmpty)
             {
                 _invoker.ExecuteCommand(new BoostCommand(this, GetComponent<ITargetable>()));
+                RaiseBoost(BoostDeck);
             }
         }
     }
@@ -200,6 +177,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         int index = Random.Range(0, creatureIndexes.Count > 0 ? creatureIndexes.Count - 1 : 0);
         ITargetable boostTarget = _board.PairsArray[creatureIndexes[index]].Enemy.Creature.GetComponent<ITargetable>();
         _invoker.ExecuteCommand(new BoostCommand(this, boostTarget));
+        RaiseBoost(BoostDeck);
 
     }
 

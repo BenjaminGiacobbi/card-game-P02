@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
 {
     [SerializeField] BoostCardView _boostCardPrefab = null;
+    [SerializeField] Text _boostCountText = null;
     [SerializeField] PlayerController _player = null;
     [SerializeField] GameObject _mainPanel = null;
     private GameObject _animObject = null;
@@ -48,6 +49,7 @@ public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
         {
             _cardObject.SetActive(false);
         }
+        _boostCountText.text = deck.Count.ToString();
     }
 
     private void FinishFlipAnimation()

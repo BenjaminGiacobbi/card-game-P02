@@ -5,21 +5,30 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public class AbilityCardView : MonoBehaviour
 {
-    [SerializeField] Text _nameTextUI = null;
-    [SerializeField] Text _costTextUI = null;
-    [SerializeField] Image _graphicUI = null;
+    [SerializeField] Text _nameText = null;
+    [SerializeField] Text _costText = null;
+    [SerializeField] Text _descText = null;
+    [SerializeField] Image _graphic = null;
+    [SerializeField] Image _background = null;
+    [SerializeField] Color _spawnColor;
+    [SerializeField] Color _damageColor;
 
     public void Display(AbilityCard abilityCard)
     {
-        _nameTextUI.text = abilityCard.Name;
-        _costTextUI.text = abilityCard.Cost.ToString();
-        _graphicUI.sprite = abilityCard.Graphic;
+        _nameText.text = abilityCard.Name;
+        _costText.text = abilityCard.Cost.ToString();
+        _descText.text = abilityCard.Description;
+        _graphic.sprite = abilityCard.Graphic;
+        if (abilityCard.Type == AbilityType.Spawn)
+            _background.color = _spawnColor;
+        else if (abilityCard.Type == AbilityType.Damage)
+            _background.color = _damageColor;
     }
 
     public void EmptyDisplay()
     {
-        _nameTextUI.text = "None";
-        _costTextUI.text = "None";
-        _graphicUI.sprite = null;
+        _nameText.text = "None";
+        _costText.text = "None";
+        _graphic.sprite = null;
     }
 }

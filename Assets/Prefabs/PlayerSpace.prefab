@@ -4840,7 +4840,7 @@ Transform:
   m_GameObject: {fileID: 5380738742656439174}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.75, y: 0, z: -2.75}
-  m_LocalScale: {x: 2.5, y: 1, z: 4.5}
+  m_LocalScale: {x: 2.5, y: 0.15, z: 4.5}
   m_Children:
   - {fileID: 3251539545321655879}
   - {fileID: 3372265867858051642}
@@ -4919,9 +4919,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnLocation: {fileID: 3251539545321655879}
-  _spawnParticles: {fileID: 1551967350955081025}
-  _spawnAudio: {fileID: 8300000, guid: 00dbfe82076c7dd4f8f62cd7ff479a45, type: 3}
-  _failAudio: {fileID: 8300000, guid: 3debf4d1bac8a09459c23ad58fe7648d, type: 3}
 --- !u!1 &7490610411449120738
 GameObject:
   m_ObjectHideFlags: 0

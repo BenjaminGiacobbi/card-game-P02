@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ability_Knife
   m_EditorClassIdentifier: 
   _name: Knife
+  _description: Deals 5 base damage to one of your own Creatures.
   _cost: 1
   _graphic: {fileID: 21300000, guid: 6225614d5a4ba6e4883cb1541415584d, type: 3}
   _playEffect: {fileID: 11400000, guid: 051f5be6e6daf8f418fdb5a347c97988, type: 2}

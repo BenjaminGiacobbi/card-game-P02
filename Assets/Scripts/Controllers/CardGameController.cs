@@ -50,6 +50,9 @@ public class CardGameController : MonoBehaviour, IDamageable, ITargetable, IBoos
         }
     }
 
+    public virtual int MaxHealth
+    { get { return _maxHealth; } private set { _maxHealth = value;} }
+
     public virtual int CurrentHandSize
     { get { return _startingHandSize; } set { _startingHandSize = value; } }
 

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ability_HeavyCannon
   m_EditorClassIdentifier: 
   _name: HeavyCannon
+  _description: A heavy creature with high attack and HP.
   _cost: 2
   _graphic: {fileID: 21300000, guid: aedfc5286eab51f4eb52cb16f774abed, type: 3}
   _playEffect: {fileID: 11400000, guid: 654f8b3a0e883334a981c08e0fb5e45c, type: 2}

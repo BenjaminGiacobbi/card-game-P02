@@ -6,6 +6,9 @@ public class BoostCardData : ScriptableObject
     [SerializeField] string _name = "...";
     public string Name => _name;
 
+    [SerializeField] string _description = "...";
+    public string Description => _description;
+
     [SerializeField] int _uses = 2;
     public int Uses => _uses;
 

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Boost_MagicMedicine
   m_EditorClassIdentifier: 
   _name: Magic Medicine
+  _description: Boosts Health by 15.
   _uses: 1
   _graphic: {fileID: 21300000, guid: b87e9db5ec86deb42b0ed7c782c72e29, type: 3}
   _playEffect: {fileID: 11400000, guid: 0c94b739487a4ac4faa5c446182be702, type: 2}

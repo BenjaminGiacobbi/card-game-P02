@@ -22,6 +22,8 @@ public class BoostStepCardGameState : CardGameState
     {
         _useBoostButton.onClick.AddListener(Boost);
         _skipBoostButton.onClick.AddListener(ToPlayerTurn);
+        _useBoostButton.interactable = true;
+        _skipBoostButton.interactable = true;
         _useBoostButton.gameObject.SetActive(true);
         StateMachine.Player.OnTurn();
         StateMachine.Enemy.OnTurn();
@@ -38,6 +40,8 @@ public class BoostStepCardGameState : CardGameState
     private void Boost()
     {
         // access player controller and tell it to use top boost card/update whatever it needs
+        _useBoostButton.interactable = false;
+        _skipBoostButton.interactable = false;
         TargetController.SetTargetToPlayer();
         StateMachine.Player.BoostAction(1);   
         StateMachine.Player.PlayBoostCard();

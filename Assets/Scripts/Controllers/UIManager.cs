@@ -63,9 +63,6 @@ public class UIManager : MonoBehaviour
         _player.CurrentMainDeck += DisplayMainDeck;
         _player.CurrentDiscard += DisplayDiscardPile;
         _player.CurrentBoostDeck += DisplayBoostDeck;
-        _player.ActionsChanged += UpdateActionsDisplay;
-        _player.HealthSet += UpdateHealthDisplay;
-        _player.DefenseChanged += UpdateDefenseDisplay;
         _player.SelectedAbilityCard += ShowSelectedGraphic;
         _player.SelectedBoostCard += ShowSelectedGraphic;
         _player.EndedSelection += HideSelectedGraphic;
@@ -95,9 +92,6 @@ public class UIManager : MonoBehaviour
         _player.CurrentMainDeck -= DisplayMainDeck;
         _player.CurrentDiscard -= DisplayDiscardPile;
         _player.CurrentBoostDeck -= DisplayBoostDeck;
-        _player.ActionsChanged -= UpdateActionsDisplay;
-        _player.HealthSet -= UpdateHealthDisplay;
-        _player.DefenseChanged -= UpdateDefenseDisplay;
         _player.SelectedAbilityCard -= ShowSelectedGraphic;
         _player.SelectedBoostCard -= ShowSelectedGraphic;
         _player.EndedSelection -= HideSelectedGraphic;
@@ -166,22 +160,6 @@ public class UIManager : MonoBehaviour
     private void DisplayBoostDeck(Deck<BoostCard> deck)
     {
         _boostDeckView.ShowDeck(deck);
-    }
-
-    private void UpdateActionsDisplay(int currentActions)
-    {
-        
-        _actionText.text = "Actions: " + currentActions;
-    }
-
-    private void UpdateDefenseDisplay(float currentDefense)
-    {
-        _defenseText.text = "Defense: " +  (1 / currentDefense * 100) + "%";
-    }
-
-    private void UpdateHealthDisplay(int currentHealth)
-    {
-        _healthText.text = "Health: " + currentHealth;
     }
 
     private void ShowMenu()

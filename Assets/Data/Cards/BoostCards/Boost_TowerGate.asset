@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Boost_TowerGate
   m_EditorClassIdentifier: 
   _name: Tower Gate
+  _description: Boosts defense by 90%.
   _uses: 1
   _graphic: {fileID: 21300000, guid: abbb749f19fa7b8408ac2aca07d22638, type: 3}
   _playEffect: {fileID: 11400000, guid: a76ef687e8c7a6e4a94825f0bcbc86b0, type: 2}

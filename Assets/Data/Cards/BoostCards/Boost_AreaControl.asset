@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Boost_AreaControl
   m_EditorClassIdentifier: 
   _name: Area Control
+  _description: Boosts Actions by 1.
   _uses: 2
   _graphic: {fileID: 21300000, guid: 50ff5f89bd12d6b46b5498a0cac44093, type: 3}
   _playEffect: {fileID: 11400000, guid: 4055559e5587d4d42b3ae5fe45bbe062, type: 2}

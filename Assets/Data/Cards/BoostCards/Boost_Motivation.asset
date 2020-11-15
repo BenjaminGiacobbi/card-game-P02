@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Boost_Motivation
   m_EditorClassIdentifier: 
   _name: Motivation
+  _description: Boosts Actions by 1.
   _uses: 2
   _graphic: {fileID: 21300000, guid: 095f5e43df3098e498c3774ce226beb3, type: 3}
   _playEffect: {fileID: 11400000, guid: 7ab9b5738d13a8a4bba5b0bd2cb16ec6, type: 2}

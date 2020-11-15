@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ability_Warrior
   m_EditorClassIdentifier: 
   _name: Warrior
+  _description: A balanced creature with good attack and HP.
   _cost: 1
   _graphic: {fileID: 21300000, guid: eb9fbcf23658975439b580a918312b53, type: 3}
   _playEffect: {fileID: 11400000, guid: e9a30c7375a42df419beed3de36c0348, type: 2}

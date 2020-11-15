@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ability_Wall
   m_EditorClassIdentifier: 
   _name: Wall
+  _description: A defensive creature with low attack power but a large HP pool.
   _cost: 1
   _graphic: {fileID: 21300000, guid: 98266f15ad472e245b73c66d3817cc0b, type: 3}
   _playEffect: {fileID: 11400000, guid: 4a2723edeeeb28b46824345afc64f1ec, type: 2}

@@ -12,6 +12,7 @@ public class AbilityCard : Card
     public AbilityCard(AbilityCardData data)
     {
         Name = data.Name;
+        Description = data.Description;
         Cost = data.Cost;
         Graphic = data.Graphic;
         PlayEffect = data.PlayEffect;

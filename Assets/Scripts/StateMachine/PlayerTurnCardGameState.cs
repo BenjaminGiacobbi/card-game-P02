@@ -25,14 +25,4 @@ public class PlayerTurnCardGameState : CardGameState
     {
         StateMachine.ChangeState<EnemyTurnCardGameState>();
     }
-
-    void ProceedToWin()
-    {
-        StateMachine.ChangeState<PlayerWinCardGameState>();
-    }
-
-    void ProceedToLose()
-    {
-        StateMachine.ChangeState<PlayerLoseCardGameState>();
-    }
 }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ability_Sacrifice
   m_EditorClassIdentifier: 
   _name: Sacrifice
+  _description: Kills one of your own creatures.
   _cost: 2
   _graphic: {fileID: 21300000, guid: ed616d525cec56244b7c40274d73598f, type: 3}
   _playEffect: {fileID: 11400000, guid: abc7b2ae49794574bbb652d9f8c9a17d, type: 2}

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Boost_Industrialize
   m_EditorClassIdentifier: 
   _name: Industrialize
+  _description: Boosts Actions by 3.
   _uses: 1
   _graphic: {fileID: 21300000, guid: 972d953e734d0f64f98a7482110cd3b3, type: 3}
   _playEffect: {fileID: 11400000, guid: b36b7137a205ec5488cc39b1ce02d7f0, type: 2}

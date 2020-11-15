@@ -6,14 +6,16 @@ public class BoostCardView : MonoBehaviour
 {
     [SerializeField] Text _nameTextUI = null;
     [SerializeField] Text _usesTextUI = null;
+    [SerializeField] Text _descText = null;
     [SerializeField] Image _graphicUI = null;
-
+    
     // TODO have the single card views inherit from the same base class
     public void Display(BoostCard boostCard)
     {
         _nameTextUI.text = boostCard.Name;
         _graphicUI.sprite = boostCard.Graphic;
         _usesTextUI.text = boostCard.Uses.ToString();
+        _descText.text = boostCard.Description;
     }
 
     public void EmptyDisplay()
