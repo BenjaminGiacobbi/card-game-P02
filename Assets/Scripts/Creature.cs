@@ -11,6 +11,7 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     public event Action<float> DefenseSet = delegate { };
     public event Action Attack = delegate { };
     public event Action Boosted = delegate { };
+    public event Action Died = delegate { };
 
     [SerializeField] int _baseHealth = 10;
     public int BaseHealth { get { return _baseHealth; } private set { _baseHealth = value; } }
@@ -33,7 +34,7 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 
     
 
-    [SerializeField] int _currentActions = 1;
+    private int _currentActions = 1;
     public int CurrentActions
     { get { return _currentActions; } private set { _currentActions = value; } }
 
@@ -42,6 +43,10 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     { get { return _attackDamage; } private set { _attackDamage = value; } }
 
     public float DefenseModifier { get; private set; } = 1.0f;
+
+    [SerializeField] string _name = "...";
+    public string Name
+    { get { return _name; } private set { name = value; } }
 
     private void Start()
     {
@@ -53,8 +58,9 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 
     public void Kill()
     {
-        // destroy feedback
-        Destroy(gameObject);
+        Died?.Invoke();
+        gameObject.SetActive(false);
+        LeanTween.delayedCall(0.5f, () => { ObjectPooler.Instance.ReturnToPool(Name, gameObject); });
     }
 
     public void TakeDamage(int damage)

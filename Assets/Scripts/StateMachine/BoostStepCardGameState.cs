@@ -12,6 +12,7 @@ public class BoostStepCardGameState : CardGameState
 
     [SerializeField] Button _useBoostButton = null;
     [SerializeField] Button _skipBoostButton = null;
+    [SerializeField] AudioClip _playerMusic = null;
 
     private void Start()
     {
@@ -25,6 +26,7 @@ public class BoostStepCardGameState : CardGameState
         _useBoostButton.interactable = true;
         _skipBoostButton.interactable = true;
         _useBoostButton.gameObject.SetActive(true);
+        MusicController.Instance.PlayMusic(_playerMusic, 0.5f);
         StateMachine.Player.OnTurn();
         StateMachine.Enemy.OnTurn();
         StartedBoostStep?.Invoke();

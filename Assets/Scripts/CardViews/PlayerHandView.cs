@@ -14,13 +14,11 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
     private GridLayoutGroup _gridLayout = null;
     private int _lastCount = 0;
     private GameObject _animObject = null;
-    bool startBool = false;
     Vector2 _animStartSize = Vector2.zero;
 
     private void Awake()
     {
         _gridLayout = GetComponent<GridLayoutGroup>();
-        
     }
 
     private void Start()
@@ -36,28 +34,20 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
             GameObject obj = Instantiate(_abilityCardPrefab.gameObject, transform);
             obj.transform.SetSiblingIndex(i);
             _handItems[i] = new HandItem(obj.GetComponent<AbilityCardView>(), obj.GetComponent<Button>(), i, this);
-            Debug.Log(_handItems[i].Obj.transform.position);
         }
-
+        // this is done entirely because in order to adjust to the Grid Layout Group, the objects need a frame
+        LeanTween.delayedCall(0.1f, ClearList);
+        
         // animation object is a copy of the ability view
         _animObject = Instantiate(_abilityCardPrefab.gameObject, _mainCanvas.transform);
         _animObject.SetActive(false);
         RectTransform rect = _animObject.GetComponent<RectTransform>();
         _animStartSize = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y);
+        
     }
 
     public void ShowDeck(Deck<AbilityCard> deck)
     {
-        // TODO need to find a way to set the physical position under gridlayout, it doesn't seem to keep until they're activated
-        if(!startBool)
-        {
-            for (int i = 0; i < _handItems.Length; i++)
-            {
-                _handItems[i].Obj.SetActive(false);
-            }
-            startBool = true;
-        }
-
         gameObject.SetActive(true);
 
         if (_lastCount > deck.Count)
@@ -95,7 +85,6 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
     public void FinishAnimation(GameObject obj)
     {
         _animObject.SetActive(false);
-        
         obj.SetActive(true);
     }
 
@@ -141,5 +130,8 @@ public class HandItem
         HandView = handView;
         Obj = cardView.gameObject;
         ItemButton.onClick.AddListener(() => { HandView.UseCard(Index); });
+        ColorBlock colors = button.colors;
+        colors.highlightedColor = new Color(140, 140, 140);
+        ItemButton.colors = colors;
     }
 }

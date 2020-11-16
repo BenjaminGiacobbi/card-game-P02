@@ -10,13 +10,24 @@ public class EnemyTurnCardGameState : CardGameState
     public static event Action EnemyTurnBegan = delegate { };
     public static event Action EnemyTurnEnded = delegate { };
 
-    [SerializeField] EnemyController _enemy = null;
     [SerializeField] float _pauseDuration = 1.5f;
+    [SerializeField] AudioClip _enemyMusic = null;
 
     public override void Enter()
     {
         EnemyTurnBegan?.Invoke();
-        StartCoroutine(EnemyThinkingRoutine(_pauseDuration));
+        MusicController.Instance.PlayMusic(_enemyMusic, 0.5f);
+        StateMachine.Enemy.EnemyThinkSequence();
+    }
+
+    private void OnEnable()
+    {
+        StateMachine.Enemy.EndedSequence += ToResults;
+    }
+
+    private void OnDisable()
+    {
+        StateMachine.Enemy.EndedSequence -= ToResults;
     }
 
     public override void Exit()
@@ -24,14 +35,8 @@ public class EnemyTurnCardGameState : CardGameState
         EnemyTurnEnded?.Invoke();
     }
 
-    IEnumerator EnemyThinkingRoutine(float duration)
+    private void ToResults()
     {
-        yield return new WaitForSeconds(duration / 2);
-
-        _enemy.EnemyThinkSequence();
-        yield return new WaitForSeconds(duration / 2);
-
-        // turn over, return to player
         StateMachine.ChangeState<TurnResultsCardGameState>();
     }
 }

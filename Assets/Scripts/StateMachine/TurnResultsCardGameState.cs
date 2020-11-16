@@ -26,6 +26,7 @@ public class TurnResultsCardGameState : CardGameState
 
     IEnumerator BattleRoutine()
     {
+        yield return new WaitForSeconds(_delayTime);
         // populates command queue
         _board.BattleCommands();
 

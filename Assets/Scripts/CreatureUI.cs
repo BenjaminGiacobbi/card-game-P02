@@ -7,10 +7,9 @@ using UnityEngine.UI;
 public class CreatureUI : MonoBehaviour
 {
     [SerializeField] GameObject _uiGroup = null;
-    [SerializeField] ParticleSystem _attackParticles = null;
-    [SerializeField] ParticleSystem _boostParticles = null;
-    [SerializeField] AudioClip _attackAudio = null;
-    [SerializeField] AudioClip _boostAudio;
+    [SerializeField] ParticleBase _attackParticles = null;
+    [SerializeField] ParticleBase _boostParticles = null;
+    [SerializeField] ParticleBase _destroyParticles = null;
     [SerializeField] Slider _hpSlider = null;
     [SerializeField] Text _hpText = null;
     [SerializeField] Text _actionText = null;
@@ -23,6 +22,8 @@ public class CreatureUI : MonoBehaviour
     private void Awake()
     {
         _attachedCreature = GetComponent<Creature>();
+        CreateParticles(_boostParticles);
+        CreateParticles(_destroyParticles);
     }
 
     private void OnEnable()
@@ -32,6 +33,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.DefenseSet += UpdateDefenseText;
         _attachedCreature.Attack += AttackAnimation;
         _attachedCreature.Boosted += BoostFeedback;
+        _attachedCreature.Died += DeathFeedback;
     }
 
     private void OnDisable()
@@ -41,6 +43,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.DefenseSet -= UpdateDefenseText;
         _attachedCreature.Attack -= AttackAnimation;
         _attachedCreature.Boosted -= BoostFeedback;
+        _attachedCreature.Died -= DeathFeedback;
     }
 
     private void Start()
@@ -50,6 +53,12 @@ public class CreatureUI : MonoBehaviour
         _attackText.text = "Atk: " + _attachedCreature.AttackDamage;
         _uiGroup.transform.rotation = Quaternion.Euler(_uiGroup.transform.rotation.x, 0, _uiGroup.transform.rotation.z);
         _startingPosition = transform.position;
+    }
+
+    private void CreateParticles(ParticleBase particles)
+    {
+        particles = Instantiate(particles, transform);
+        particles.transform.position = transform.position;
     }
 
     private void UpdateHealthDisplay(int healthValue)
@@ -77,18 +86,21 @@ public class CreatureUI : MonoBehaviour
 
     private void BoostFeedback()
     {
-        if (_boostAudio)
-            AudioHelper.PlayClip2D(_boostAudio, 0.5f);
+        
+        if (_boostParticles)
+        {
+            Debug.Log("Playing");
+            _boostParticles.PlayComponents();
+        }
+            
     }
 
     private void AttackAnimation()
     {
         LeanTween.move(gameObject, (_startingPosition + (2 * transform.forward)), 0.3f).setEaseInOutBack().setOnComplete(
             () => { LeanTween.move(gameObject, _startingPosition, 0.15f); });
-        if(_attackParticles != null)
-            _attackParticles.Play();
-        if (_attackAudio != null)
-            AudioHelper.PlayClip2D(_attackAudio, 0.5f);
+        if (_attackParticles != null)
+            _attackParticles.PlayComponents();
     }
 
     private void AnimateTextFlash(Text text)
@@ -99,8 +111,9 @@ public class CreatureUI : MonoBehaviour
             () => { LeanTween.colorText(rect, tempColor, 0.1f); });
     }
 
-    private void AnimateHealthBar()
+    private void DeathFeedback()
     {
-
+        if (_destroyParticles)
+            _destroyParticles.PlayComponents();
     }
 }

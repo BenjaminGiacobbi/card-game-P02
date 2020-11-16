@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.UI;
+using System;
 
 [RequireComponent(typeof(CommandInvoker))]
 public class EnemyController : CardGameController, IDamageable, ITargetable, IBoostable
 {
+    public event Action StartedSequence = delegate { };
+    public event Action EndedSequence = delegate { };
+
     [SerializeField] PlayBoard _board = null;
 
     [Header("Rate AI will use boost card in boost step")]
@@ -42,7 +44,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
 
     private bool RollChance(float percentChance)
     {
-        float random = Random.Range(0.0f, 1.0f);
+        float random = UnityEngine.Random.Range(0.0f, 1.0f);
         if (random >= (1 - percentChance))
             return true;
         else
@@ -96,16 +98,26 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
                 _invoker.ExecuteCommand(new DrawCommand(this));
             }
         }
-        
+
+        StartCoroutine(ActionsRoutine());
+    }
+
+    IEnumerator ActionsRoutine()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        StartedSequence?.Invoke();
         // process sequence while actions remain
         while (Actions > 0)
         {
+            yield return new WaitForSeconds(1f);
+
             // info collection for playable hand before each action
             _playableHand = new List<int>();
             for (int i = 0; i < Hand.Count; i++)
             {
                 if (Hand.GetCard(i).Cost <= Actions)
-                    _playableHand.Add(i); 
+                    _playableHand.Add(i);
             }
 
             // info collection for board state at beginning of enemy turn
@@ -113,7 +125,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
 
             // first decide whether or not to use boost card (chance on if creatures or always on MAX creatures)
             if (((creatureCount > 0 && _playableHand.Count == 0) ||
-                (creatureCount > 0 && RollChance(_turnBoostPercent)) || 
+                (creatureCount > 0 && RollChance(_turnBoostPercent)) ||
                 creatureCount == _board.PairsArray.Length) && !BoostDeck.IsEmpty)
             {
                 PlayRandomBoost();
@@ -140,8 +152,12 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
 
             // if it can't perform a single action up to this point,
             // pass turn
-            break;
+            EndedSequence?.Invoke();
+            yield break;
         }
+
+        EndedSequence?.Invoke();
+        yield break;
     }
 
     private int CollectCreatureInfo()
@@ -174,7 +190,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
                 creatureIndexes.Add(i);
         }
 
-        int index = Random.Range(0, creatureIndexes.Count > 0 ? creatureIndexes.Count - 1 : 0);
+        int index = UnityEngine.Random.Range(0, creatureIndexes.Count > 0 ? creatureIndexes.Count - 1 : 0);
         ITargetable boostTarget = _board.PairsArray[creatureIndexes[index]].Enemy.Creature.GetComponent<ITargetable>();
         _invoker.ExecuteCommand(new BoostCommand(this, boostTarget));
         RaiseBoost(BoostDeck);
@@ -197,7 +213,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         // spawn a useful creature
         if (indexes.Count > 0)
         {
-            int selectedIndex = Random.Range(0, indexes.Count > 0 ? indexes.Count - 1 : 0);
+            int selectedIndex = UnityEngine.Random.Range(0, indexes.Count > 0 ? indexes.Count - 1 : 0);
             ITargetable spawnTarget = _board.PairsArray[indexes[selectedIndex]].Enemy.GetComponent<ITargetable>();
             return WeightedMonsterSelection(spawnTarget);
         }
@@ -221,7 +237,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         // plays a powerful creature to damage the player a lot
         if(indexes.Count > 0)
         {
-            int selectedIndex = Random.Range(0, indexes.Count > 0 ? indexes.Count - 1 : 0);
+            int selectedIndex = UnityEngine.Random.Range(0, indexes.Count > 0 ? indexes.Count - 1 : 0);
             ITargetable spawnTarget = _board.PairsArray[indexes[selectedIndex]].Enemy.GetComponent<ITargetable>();
             return PowerMonsterSelection(spawnTarget);
         }
@@ -234,7 +250,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         // roll weight for full random first
         if (RollChance(0.15f))
         {
-            int index = Random.Range(0, _playableHand.Count - 1);
+            int index = UnityEngine.Random.Range(0, _playableHand.Count - 1);
             _invoker.ExecuteCommand(new AbilityCommand(this, target, _playableHand[index]));
             return true;
         }

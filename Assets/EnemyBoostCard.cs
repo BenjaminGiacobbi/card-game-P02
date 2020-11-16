@@ -25,6 +25,9 @@ public class EnemyBoostCard : MonoBehaviour
 
     private void ShowBoostCard(Deck<BoostCard> deck)
     {
-        _view.Display(deck.TopItem);
+        if (!deck.IsEmpty)
+            _view.Display(deck.TopItem);
+        else
+            gameObject.SetActive(false);
     }
 }

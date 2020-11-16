@@ -10,6 +10,8 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
     public event Action EndedSelection = delegate { };
     public event Action ActionEnd = delegate { };
 
+    [SerializeField] AudioClip _clickFailAudio = null;
+
     Coroutine _abilityRoutine = null;
     Coroutine _boostRoutine = null;
 
@@ -70,6 +72,11 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
                     _abilityRoutine = null;
                     yield break;
                 }
+                else
+                {
+                    if (_clickFailAudio)
+                        AudioHelper.PlayClip2D(_clickFailAudio, 0.5f);
+                }
             }
             else if (Input.GetMouseButtonDown(1))
             {
@@ -110,6 +117,12 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
                     _boostRoutine = null;
                     yield break;
                 }
+                else
+                {
+                    if (_clickFailAudio)
+                        AudioHelper.PlayClip2D(_clickFailAudio, 0.5f);
+                }
+
             }
             else if (Input.GetMouseButtonDown(1))
             {

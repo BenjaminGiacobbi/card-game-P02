@@ -11,11 +11,13 @@ public class MenuCardGameState : CardGameState
 
     [SerializeField] Button _startButton = null;
     [SerializeField] Button _quitButton = null;
+    [SerializeField] AudioClip _titleMusic = null;
 
     public override void Enter()
     {
         _startButton.onClick.AddListener(StartGame);
         _quitButton.onClick.AddListener(QuitGame);
+        MusicController.Instance.PlayMusic(_titleMusic, 0.5f);
         EnteredMenu?.Invoke();
     }
 

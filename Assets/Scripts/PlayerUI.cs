@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class PlayerUI : MonoBehaviour
 {
     [SerializeField] CardGameController _controller = null;
+    [SerializeField] CameraShake _shake = null;
     [SerializeField] Slider _hpSlider = null;
     [SerializeField] Color _damageColor;
     [SerializeField] Image _sliderFill = null;
@@ -49,6 +50,10 @@ public class PlayerUI : MonoBehaviour
             LeanTween.color(_fillRect, _damageColor, 0.15f).setOnComplete(
                 () => { LeanTween.color(_fillRect, temp, 0.1f); });
             _hpSlider.maxValue = _controller.MaxHealth;
+            if(_shake)
+            {
+                StartCoroutine(_shake.Shake());
+            }
         }
         else if (value > _controller.MaxHealth)
             _hpSlider.maxValue = _controller.CurrentHealth;

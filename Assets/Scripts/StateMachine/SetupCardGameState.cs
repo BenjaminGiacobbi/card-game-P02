@@ -20,6 +20,7 @@ public class SetupCardGameState : CardGameState
     public override void Enter()
     {
         StartedSetup?.Invoke();
+        MusicController.Instance.StopMusic();
         // CANT change state while still in Enter/Exit
         // DONT put ChangeState<> here
         _board.ClearBoard();

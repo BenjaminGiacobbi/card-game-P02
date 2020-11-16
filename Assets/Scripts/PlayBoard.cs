@@ -50,13 +50,13 @@ public class PlayBoard : MonoBehaviour
                 // targets for simplicity
                 ITargetable priorityTarget = priorityAttacker.GetComponent<ITargetable>();
                 ITargetable secondaryTarget = secondaryAttacker.GetComponent<ITargetable>();
+                int trackPriorityHP = priorityAttacker.CurrentHealth;
                 int trackSecondaryHP = secondaryAttacker.CurrentHealth;
 
                 // adds alternating actions for battle
                 int j = 0;
                 for (int i = 0; i < priorityAttacker.CurrentActions; i++)
                 {
-                    Debug.Log("Generating Priority Command" + i);
                     _invoker.AddCommandToQueue(new AttackCommand(priorityAttacker, secondaryTarget));
 
                     trackSecondaryHP -= Mathf.CeilToInt(priorityAttacker.AttackDamage * secondaryAttacker.DefenseModifier);
@@ -66,11 +66,13 @@ public class PlayBoard : MonoBehaviour
                     if(j < secondaryAttacker.CurrentActions)
                     {
                         _invoker.AddCommandToQueue(new AttackCommand(secondaryAttacker, priorityTarget));
+                        trackPriorityHP -= Mathf.CeilToInt(secondaryAttacker.AttackDamage * priorityAttacker.DefenseModifier);
+                        if (trackPriorityHP <= 0)
+                            break;
                         j++;
                     }
                 }
             }
-
             // when player slot only is filled
             else if (pair.Player.Creature && !pair.Enemy.Creature)
             {
@@ -80,7 +82,6 @@ public class PlayBoard : MonoBehaviour
                     _invoker.AddCommandToQueue(new AttackCommand(pair.Player.Creature, TargetController.CurrentEnemy));
                 }
             }
-
             // when enemy slot only is filled
             else if (!pair.Player.Creature && pair.Enemy.Creature)
             {
