@@ -10,8 +10,10 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
     public event Action EndedSelection = delegate { };
     public event Action ActionEnd = delegate { };
 
-    [SerializeField] AudioClip _clickFailAudio = null;
+    public int Wins { get; set; }
+    public int Losses { get; set; }
 
+    [SerializeField] AudioClip _clickFailAudio = null;
     Coroutine _abilityRoutine = null;
     Coroutine _boostRoutine = null;
 

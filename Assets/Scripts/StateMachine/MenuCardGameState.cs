@@ -11,10 +11,16 @@ public class MenuCardGameState : CardGameState
 
     [SerializeField] Button _startButton = null;
     [SerializeField] Button _quitButton = null;
+    [SerializeField] Text _winsText = null;
+    [SerializeField] Text _lossesText = null;
+    [SerializeField] Text _ratioText = null;
     [SerializeField] AudioClip _titleMusic = null;
 
     public override void Enter()
     {
+        _winsText.text = StateMachine.Player.Wins.ToString();
+        _lossesText.text = StateMachine.Player.Losses.ToString();
+        _ratioText.text = ((float)StateMachine.Player.Wins / StateMachine.Player.Losses != 0 ? StateMachine.Player.Losses : 1) + "W/L";
         _startButton.onClick.AddListener(StartGame);
         _quitButton.onClick.AddListener(QuitGame);
         MusicController.Instance.PlayMusic(_titleMusic, 0.5f);
@@ -35,6 +41,7 @@ public class MenuCardGameState : CardGameState
 
     public void QuitGame()
     {
+        SaveSystem.SaveRecordData(StateMachine.Player.Wins, StateMachine.Player.Losses);
         Application.Quit();
     }
 }

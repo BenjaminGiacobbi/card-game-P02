@@ -13,6 +13,17 @@ public class CardGameSM : StateMachine
     {
         // set starting state, already on object
         // NOTE: this allows any states, not just CardGameStates, do change
+        RecordData loadData = SaveSystem.LoadRecordData();
+        if(loadData != null)
+        {
+            Player.Wins = loadData.Wins;
+            Player.Losses = loadData.Losses;
+        }
+        else
+        {
+            Player.Wins = 0;
+            Player.Losses = 0;
+        }
         ChangeState<MenuCardGameState>();
     }
 }

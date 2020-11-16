@@ -12,6 +12,7 @@ public class PlayerWinCardGameState : CardGameState
     public override void Enter()
     {
         StartedWinState?.Invoke();
+        StateMachine.Player.Wins++;
         _menuButton.onClick.AddListener(ReturnToMainMenu);
     }
 

@@ -12,6 +12,7 @@ public class PlayerLoseCardGameState : CardGameState
     public override void Enter()
     {
         StartedLoseState?.Invoke();
+        StateMachine.Player.Losses++;
         _menuButton.onClick.AddListener(ReturnToMainMenu);
     }
 
