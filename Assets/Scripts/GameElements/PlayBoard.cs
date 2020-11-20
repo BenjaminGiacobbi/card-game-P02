@@ -98,8 +98,8 @@ public class PlayBoard : MonoBehaviour
     {
         foreach (SpacePair pair in PairsArray)
         {
-            pair.Player.ResetCreatureState();
-            pair.Enemy.ResetCreatureState();
+            pair.Player.KillCreature();
+            pair.Enemy.KillCreature();
         }
     }
 }

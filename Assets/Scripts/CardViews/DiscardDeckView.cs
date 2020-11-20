@@ -6,14 +6,14 @@ public class DiscardDeckView : MonoBehaviour, IDeckView<AbilityCard>
     [SerializeField] AbilityCardView _abilityCardPrefab = null;
     [SerializeField] Text _discardCountText = null;
 
-    private GameObject _cardObject = null;
-
     private void Start()
     {
-        _cardObject = Instantiate(_abilityCardPrefab.gameObject, transform);
-        _cardObject.transform.SetSiblingIndex(0);
-        _cardObject.transform.localPosition = Vector3.zero;
-        _cardObject.SetActive(false);
+        Button button = _abilityCardPrefab.GetComponent<Button>();
+        button.interactable = false;
+        button.transition = Selectable.Transition.None;
+        _abilityCardPrefab.transform.SetSiblingIndex(0);
+        _abilityCardPrefab.transform.localPosition = Vector3.zero;
+        _abilityCardPrefab.gameObject.SetActive(false);
         _discardCountText.text = "0";
     }
 
@@ -21,19 +21,19 @@ public class DiscardDeckView : MonoBehaviour, IDeckView<AbilityCard>
     {
         if (!deck.IsEmpty)
         {
-            _cardObject.GetComponent<AbilityCardView>()?.Display(deck.TopItem);
-            _cardObject.SetActive(true);
+            _abilityCardPrefab.GetComponent<AbilityCardView>()?.Display(deck.TopItem);
+            _abilityCardPrefab.gameObject.SetActive(true);
         }
         else
         {
-            _cardObject.SetActive(false);
+            _abilityCardPrefab.gameObject.SetActive(false);
         }
         _discardCountText.text = deck.Count.ToString();
     }
 
     public void HideDeck()
     {
-        _cardObject.SetActive(false);
-        _cardObject.GetComponent<AbilityCardView>()?.EmptyDisplay();
+        _abilityCardPrefab.gameObject.SetActive(false);
+        _abilityCardPrefab.GetComponent<AbilityCardView>()?.EmptyDisplay();
     }
 }

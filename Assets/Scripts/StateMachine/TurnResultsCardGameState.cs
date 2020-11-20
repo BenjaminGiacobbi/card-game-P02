@@ -9,7 +9,6 @@ public class TurnResultsCardGameState : CardGameState
     [SerializeField] CommandInvoker _boardInvoker = null;
     [SerializeField] float _delayTime = 2f;
     [SerializeField] Text _resultsText = null;
-    private float timer = 0;
 
     private void Start()
     {

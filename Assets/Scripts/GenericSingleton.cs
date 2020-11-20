@@ -28,7 +28,6 @@ public class GenericSingleton<T> : MonoBehaviour where T : Component
         if (_instance == null)
         {
             _instance = this as T;
-            DontDestroyOnLoad(gameObject);
         }
         else
             Destroy(gameObject);

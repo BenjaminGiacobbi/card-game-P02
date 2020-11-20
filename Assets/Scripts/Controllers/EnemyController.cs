@@ -107,6 +107,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         yield return new WaitForSeconds(1.5f);
 
         StartedSequence?.Invoke();
+        /*
         // process sequence while actions remain
         while (Actions > 0)
         {
@@ -155,7 +156,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             EndedSequence?.Invoke();
             yield break;
         }
-
+        */
         EndedSequence?.Invoke();
         yield break;
     }

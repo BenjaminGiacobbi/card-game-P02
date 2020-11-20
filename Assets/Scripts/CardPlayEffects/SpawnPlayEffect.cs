@@ -5,7 +5,6 @@ public class SpawnPlayEffect : CardPlayEffect
 {
     [SerializeField] Creature _creatureToSpawn = null;
     public Creature Creature => _creatureToSpawn;
-    // private GameObject _spawnedObject = null;
 
     public override void Activate(ITargetable target)
     {
@@ -15,16 +14,14 @@ public class SpawnPlayEffect : CardPlayEffect
         {
             GameObject newCreature = ObjectPooler.Instance.SpawnObject(
                 Creature.Name, space.transform, space.SpawnLocation.position, space.SpawnLocation.transform.rotation);
-            space.Creature = newCreature.GetComponent<Creature>();
+            Creature creatureScript = newCreature.GetComponent<Creature>();
+            creatureScript.OnSpawn();
+            space.Creature = creatureScript;
             space.SpawnFeedback();
             if (space.Creature == null)
             {
                 Debug.Log("Creature Missing");
             }
-        }
-        else
-        {
-            Debug.Log("Target is not a board space.");
         }
     }
 }

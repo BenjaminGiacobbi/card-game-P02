@@ -168,7 +168,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 4
+  m_Text: 2
 --- !u!1 &4057801109125647866
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,7 +248,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Name
+  m_Text: Iron Skin
 --- !u!114 &4057801109125647860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,7 +330,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 430cd28cf9d268d4ba1997becc6f8cea, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -370,7 +370,7 @@ GameObject:
   - component: {fileID: 4057801109960026766}
   - component: {fileID: 1685586398796680887}
   m_Layer: 5
-  m_Name: BoostCard_btn'
+  m_Name: BoostCard_btn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -385,7 +385,7 @@ RectTransform:
   m_GameObject: {fileID: 4057801109960026764}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children:
   - {fileID: 4057801109125647867}
   - {fileID: 4057801110046676819}
@@ -672,7 +672,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Test text containing a boost effect
+  m_Text: Boosts defense by 30%.
 --- !u!114 &2981916494411715645
 MonoBehaviour:
   m_ObjectHideFlags: 0

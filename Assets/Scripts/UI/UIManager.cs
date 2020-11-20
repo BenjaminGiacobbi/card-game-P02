@@ -14,8 +14,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] BoostCardView _boostCardPrefab = null;
     [SerializeField] AbilityCardView _abilityCardPrefab = null;
     [SerializeField] GameObject _menuPanel = null;
-    [SerializeField] GameObject _setupPanel = null;
-    [SerializeField] GameObject _boostStepPanel = null;
+    [SerializeField] PanelUI _setupPanel = null;
+    [SerializeField] PanelUI _boostStepPanel = null;
     [SerializeField] GameObject _mainPlayerPanel = null;
     [SerializeField] GameObject _losePanel = null;
     [SerializeField] GameObject _winPanel = null;
@@ -173,25 +173,27 @@ public class UIManager : MonoBehaviour
     private void ShowMenu()
     {
         _menuPanel.SetActive(true);
+        _setupPanel.gameObject.SetActive(true);
     }
 
     private void HideMenu()
     {
         _menuPanel.SetActive(false);
+        _setupPanel.gameObject.SetActive(false);
     }
 
     private void ShowSetupGraphics()
     {
-        _setupPanel.SetActive(true);
-        _boostStepPanel.SetActive(true);
+        _setupPanel.OpenAnimation();
+        _boostStepPanel.gameObject.SetActive(true);
         _mainPlayerPanel.SetActive(true);
     }
 
     private void HideSetupGraphics()
     {
-        _setupPanel.SetActive(false);
-        _boostStepPanel.SetActive(false);
+        _boostStepPanel.gameObject.SetActive(false);
         _mainPlayerPanel.SetActive(false);
+        _setupPanel.CloseAnimation();
     }
 
     private void ShowBoostStep()
@@ -201,7 +203,7 @@ public class UIManager : MonoBehaviour
 
     private void HideBoostStep()
     {
-        _boostStepPanel.SetActive(false);
+        _boostStepPanel.CloseAnimation();
     }
 
     private void AnimateBoostStep()
@@ -304,7 +306,7 @@ public class UIManager : MonoBehaviour
 
         _turnText.gameObject.SetActive(false);
         _blockPanel.SetActive(false);
-        _boostStepPanel.SetActive(true);
+        _boostStepPanel.OpenAnimation();
         _boostStepPanel.GetComponent<IDeckView<BoostCard>>()?.ShowDeck(_player.BoostDeck);
 
         yield break;

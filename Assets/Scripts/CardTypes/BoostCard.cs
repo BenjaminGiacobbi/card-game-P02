@@ -10,11 +10,14 @@ public class BoostCard : Card
 
     public BoostCard(BoostCardData data)
     {
-        Name = data.Name;
-        Description = data.Description;
-        Uses = data.Uses;
-        Graphic = data.Graphic;
-        PlayEffect = data.PlayEffect;
+        if(data != null)
+        {
+            Name = data.Name;
+            Description = data.Description;
+            Uses = data.Uses;
+            Graphic = data.Graphic;
+            PlayEffect = data.PlayEffect;
+        }
     }
 
     public override void Play()

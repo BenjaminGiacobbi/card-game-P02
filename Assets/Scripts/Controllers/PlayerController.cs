@@ -13,9 +13,14 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
     public int Wins { get; set; }
     public int Losses { get; set; }
 
+    [SerializeField] AudioClip _selectedAudio = null;
+    [SerializeField] AudioClip _droppedAudio = null;
     [SerializeField] AudioClip _clickFailAudio = null;
+    [SerializeField] AudioClip _boostAudio = null;
+    [SerializeField] float _drawDelay = 0.25f;
     Coroutine _abilityRoutine = null;
     Coroutine _boostRoutine = null;
+    float timer = 0;
 
     public override void PlayAbilityCard(int index)
     {
@@ -24,6 +29,16 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
         {
             if (_abilityRoutine == null) 
                 _abilityRoutine = StartCoroutine(AbilityCardSelection(targetCard, index));
+        }
+    }
+
+    public override void Draw()
+    {
+        if(timer == 0)
+        {
+            base.Draw();
+            timer = _drawDelay;
+            LeanTween.value(_drawDelay, 0, _drawDelay).setOnUpdate((float val) => { timer = val; });
         }
     }
 
@@ -39,6 +54,8 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
     public override void PlayBoostCard()
     {
         base.PlayBoostCard();
+        if (_boostAudio)
+            AudioHelper.PlayClip2D(_boostAudio, 0.5f);
         EndedSelection?.Invoke();
     }
 
@@ -47,6 +64,8 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
     IEnumerator AbilityCardSelection(AbilityCard card, int index)
     {
         SelectedAbilityCard?.Invoke(card);
+        if (_selectedAudio)
+            AudioHelper.PlayClip2D(_selectedAudio, 0.5f);
         yield return new WaitForEndOfFrame();
         while(true)
         {
@@ -54,7 +73,7 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
             {
                 RaycastHit hit = GetPointerRaycast();
                 BoardSpace space = hit.collider?.GetComponent<BoardSpace>();
-                if (space != null) // && hit.collider.gameObject.layer == LayerMask.NameToLayer("PlayerSpace")
+                if (space != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("PlayerSpace"))
                 {
                     if (!space.UseCard(card))
                     {
@@ -83,6 +102,8 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
             else if (Input.GetMouseButtonDown(1))
             {
                 EndedSelection?.Invoke();
+                if (_droppedAudio)
+                    AudioHelper.PlayClip2D(_droppedAudio, 0.5f);
                 _abilityRoutine = null;
                 yield break;
             }
@@ -94,6 +115,8 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
     IEnumerator BoostCardSelection()
     {
         SelectedBoostCard?.Invoke(BoostDeck.TopItem);
+        if (_selectedAudio)
+            AudioHelper.PlayClip2D(_selectedAudio, 0.5f);
         yield return new WaitForEndOfFrame();
         while(true)
         {
@@ -129,6 +152,8 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
             else if (Input.GetMouseButtonDown(1))
             {
                 EndedSelection?.Invoke();
+                if (_droppedAudio)
+                    AudioHelper.PlayClip2D(_droppedAudio, 0.5f);
                 _boostRoutine = null;
                 yield break;
             }

@@ -8,8 +8,11 @@ public class CreatureUI : MonoBehaviour
 {
     [SerializeField] GameObject _uiGroup = null;
     [SerializeField] ParticleBase _attackParticles = null;
-    [SerializeField] ParticleBase _boostParticles = null;
-    [SerializeField] ParticleBase _destroyParticles = null;
+    [SerializeField] string _boostParticleTag = "BoostParticles";
+    [SerializeField] string _destroyParticleTag = "DestroyParticles";
+    [SerializeField] Color _boostHPColor;
+    [SerializeField] Color _boostActColor;
+    [SerializeField] Color _boostDefColor;
     [SerializeField] Slider _hpSlider = null;
     [SerializeField] Text _hpText = null;
     [SerializeField] Text _actionText = null;
@@ -22,8 +25,6 @@ public class CreatureUI : MonoBehaviour
     private void Awake()
     {
         _attachedCreature = GetComponent<Creature>();
-        CreateParticles(_boostParticles);
-        CreateParticles(_destroyParticles);
     }
 
     private void OnEnable()
@@ -31,6 +32,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.HealthSet += UpdateHealthDisplay;
         _attachedCreature.ActionSet += UpdateActionText;
         _attachedCreature.DefenseSet += UpdateDefenseText;
+        _attachedCreature.Spawned += CalibrateUI;
         _attachedCreature.Attack += AttackAnimation;
         _attachedCreature.Boosted += BoostFeedback;
         _attachedCreature.Died += DeathFeedback;
@@ -41,6 +43,7 @@ public class CreatureUI : MonoBehaviour
         _attachedCreature.HealthSet -= UpdateHealthDisplay;
         _attachedCreature.ActionSet -= UpdateActionText;
         _attachedCreature.DefenseSet -= UpdateDefenseText;
+        _attachedCreature.Spawned -= CalibrateUI;
         _attachedCreature.Attack -= AttackAnimation;
         _attachedCreature.Boosted -= BoostFeedback;
         _attachedCreature.Died -= DeathFeedback;
@@ -49,16 +52,15 @@ public class CreatureUI : MonoBehaviour
     private void Start()
     {
         _hpSlider.minValue = 0;
-        _hpSlider.maxValue = _attachedCreature.BaseHealth;
-        _attackText.text = "Atk: " + _attachedCreature.AttackDamage;
-        _uiGroup.transform.rotation = Quaternion.Euler(_uiGroup.transform.rotation.x, 0, _uiGroup.transform.rotation.z);
         _startingPosition = transform.position;
+        _attackText.text = "Atk: " + _attachedCreature.AttackDamage;
     }
 
-    private void CreateParticles(ParticleBase particles)
+    private void CalibrateUI()
     {
-        particles = Instantiate(particles, transform);
-        particles.transform.position = transform.position;
+        _hpSlider.maxValue = _attachedCreature.BaseHealth;
+        _uiGroup.transform.LookAt(new Vector3(Camera.main.transform.position.x, transform.position.y, Camera.main.transform.position.z));
+        _uiGroup.transform.Rotate(new Vector3(0, 180, 0));
     }
 
     private void UpdateHealthDisplay(int healthValue)
@@ -84,15 +86,26 @@ public class CreatureUI : MonoBehaviour
         AnimateTextFlash(_defenseText);
     }
 
-    private void BoostFeedback()
+    private void BoostFeedback(string boostedString)
     {
-        
-        if (_boostParticles)
+        GameObject boost = ObjectPooler.Instance.SpawnObject(_boostParticleTag, null, transform.position, transform.rotation);
+        LeanTween.delayedCall(0.5f, () => { ObjectPooler.Instance.ReturnToPool(_boostParticleTag, boost); });
+        ParticleBase particles = boost.GetComponent<ParticleBase>();
+        switch (boostedString)
         {
-            Debug.Log("Playing");
-            _boostParticles.PlayComponents();
+            case "HP":
+                particles.ChangeColor(_boostHPColor);
+                break;
+            case "Act":
+                particles.ChangeColor(_boostActColor);
+                break;
+            case "Def":
+                particles.ChangeColor(_boostDefColor);
+                break;
+            default:
+                break;
         }
-            
+        particles.PlayComponents();
     }
 
     private void AttackAnimation()
@@ -113,7 +126,8 @@ public class CreatureUI : MonoBehaviour
 
     private void DeathFeedback()
     {
-        if (_destroyParticles)
-            _destroyParticles.PlayComponents();
+        GameObject destroy = ObjectPooler.Instance.SpawnObject(_destroyParticleTag, null, transform.position, transform.rotation);
+        LeanTween.delayedCall(0.5f, () => { ObjectPooler.Instance.ReturnToPool(_destroyParticleTag, destroy); });
+        destroy.GetComponent<ParticleBase>().PlayComponents();
     }
 }

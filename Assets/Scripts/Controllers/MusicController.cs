@@ -18,6 +18,7 @@ public class MusicController : GenericSingleton<MusicController>
 
     public void PlayMusic(AudioClip music, float volume)
     {
+        /*
         if(_musicPlayer.isPlaying)
         {
             LeanTween.value(_musicPlayer.volume, 0, 0.5f).setOnUpdate(
@@ -28,21 +29,26 @@ public class MusicController : GenericSingleton<MusicController>
         {
             StartNewSong(music, volume);
         }
+        */
     }
 
     private void StartNewSong(AudioClip music, float volume)
     {
+        /*
         _musicPlayer.volume = volume;
         _musicPlayer.clip = music;
         _musicPlayer.Play();
+        */
     }
 
     public void StopMusic()
     {
+        /*
         if(_musicPlayer.isPlaying)
         {
             LeanTween.value(_musicPlayer.volume, 0, 0.5f).setOnUpdate(
                 (float val) => { _musicPlayer.volume = val; });
         }
+        */
     }
 }

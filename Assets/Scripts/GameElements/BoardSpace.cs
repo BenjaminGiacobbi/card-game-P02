@@ -45,13 +45,11 @@ public class BoardSpace : MonoBehaviour, ITargetable
             _spawnParticles.PlayComponents();
     }
 
-    public void ResetCreatureState()
+    public void KillCreature()
     {
         if (Creature != null)
         {
-            Creature.Died -= ClearCreatureState;
             Creature.Kill();
-            Creature = null;
         }   
     }
 

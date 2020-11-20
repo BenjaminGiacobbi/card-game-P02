@@ -9,8 +9,9 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     public event Action<int> HealthSet = delegate { };
     public event Action<int> ActionSet = delegate { };
     public event Action<float> DefenseSet = delegate { };
+    public event Action Spawned = delegate { };
     public event Action Attack = delegate { };
-    public event Action Boosted = delegate { };
+    public event Action<string> Boosted = delegate { };
     public event Action Died = delegate { };
 
     [SerializeField] int _baseHealth = 10;
@@ -48,19 +49,20 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     public string Name
     { get { return _name; } private set { name = value; } }
 
-    private void Start()
+    public void OnSpawn()
     {
         CurrentHealth = BaseHealth;
         HealthSet?.Invoke(CurrentHealth);
         ActionSet?.Invoke(CurrentActions);
         DefenseSet?.Invoke(DefenseModifier);
+        Spawned?.Invoke();
     }
 
     public void Kill()
     {
         Died?.Invoke();
         gameObject.SetActive(false);
-        LeanTween.delayedCall(0.5f, () => { ObjectPooler.Instance.ReturnToPool(Name, gameObject); });
+        LeanTween.delayedCall(0.55f, () => { ObjectPooler.Instance.ReturnToPool(Name, gameObject); });
     }
 
     public void TakeDamage(int damage)
@@ -92,20 +94,20 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
     {
         CurrentHealth += value;
         HealthSet?.Invoke(CurrentHealth);
-        Boosted?.Invoke();
+        Boosted?.Invoke("HP");
     }
 
     public void BoostAction(int value)
     {
         CurrentActions += value;
         ActionSet?.Invoke(CurrentActions);
-        Boosted?.Invoke();
+        Boosted?.Invoke("Act");
     }
 
     public void BoostDefense(float modifier)
     {
         DefenseModifier = modifier;
         DefenseSet?.Invoke(DefenseModifier);
-        Boosted?.Invoke();
+        Boosted?.Invoke("Def");
     }
 }
