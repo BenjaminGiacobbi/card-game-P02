@@ -101,6 +101,7 @@ public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
         _mainView.Display(displayItem);
         LeanTween.scale(_boostCardPrefab.gameObject, displayScale, 0f).setOnComplete(
             () => { _boostCardPrefab.gameObject.SetActive(true); });
+        _animView.gameObject.SetActive(false);
     }
 
     public void HideDeck()

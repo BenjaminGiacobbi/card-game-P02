@@ -16,16 +16,19 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
     private GameObject _animObject = null;
     Vector2 _animStartSize = Vector2.zero;
 
+
     private void Awake()
     {
         _gridLayout = GetComponent<GridLayoutGroup>();
     }
+
 
     private void Start()
     {
         CreateButtons(_player.CurrentHandSize);
     }
     
+
     public void CreateButtons(int buttonNumber)
     {
         _handItems = new HandItem[buttonNumber];
@@ -45,6 +48,7 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
         _animStartSize = new Vector2(rect.sizeDelta.x, rect.sizeDelta.y);
         
     }
+
 
     public void ShowDeck(Deck<AbilityCard> deck)
     {
@@ -82,11 +86,13 @@ public class PlayerHandView : MonoBehaviour, IDeckView<AbilityCard>
         _lastCount = deck.Count;
     }
 
+
     public void FinishAnimation(GameObject obj)
     {
         _animObject.SetActive(false);
         obj.SetActive(true);
     }
+
 
     public void HideDeck()
     {

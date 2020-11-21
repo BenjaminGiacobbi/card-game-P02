@@ -198,7 +198,8 @@ public class UIManager : MonoBehaviour
 
     private void ShowBoostStep()
     {
-        StartCoroutine(BoostStepRoutine());
+        _boostStepView.ShowDeck(_player.BoostDeck);
+        _boostStepPanel.OpenAnimation();
     }
 
     private void HideBoostStep()
@@ -220,8 +221,7 @@ public class UIManager : MonoBehaviour
         _turnText.transform.position = _point2;
         _turnText.gameObject.SetActive(true);
         LeanTween.move(_turnText.gameObject, _blockPanel.transform.position, 1f).setEaseInOutBack().setOnComplete(
-            () => { LeanTween.move(_turnText.gameObject, _point2, 1f).setOnComplete(
-                () => { _blockPanel.SetActive(false); }); });
+            () => { StartCoroutine(MainPanelRoutine()); });
     }
 
     private void HideMainPanel()
@@ -292,23 +292,11 @@ public class UIManager : MonoBehaviour
         _boostObject.SetActive(false);
     }
 
-    IEnumerator BoostStepRoutine()
+    private IEnumerator MainPanelRoutine()
     {
-        _blockPanel.SetActive(true);
-        _turnText.transform.position = _point2;
-        _turnText.text = "Boost Step";
-        _turnText.gameObject.SetActive(true);
-        LeanTween.move(_turnText.gameObject, _blockPanel.transform.position, 0.5f);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.75f);
 
-        LeanTween.move(_turnText.gameObject, _point1, 0.5f);
-        yield return new WaitForSeconds(0.5f);
-
-        _turnText.gameObject.SetActive(false);
-        _blockPanel.SetActive(false);
-        _boostStepPanel.OpenAnimation();
-        _boostStepPanel.GetComponent<IDeckView<BoostCard>>()?.ShowDeck(_player.BoostDeck);
-
-        yield break;
+        LeanTween.move(_turnText.gameObject, _point2, 1f).setOnComplete(
+                () => { _blockPanel.SetActive(false); });
     }
 }

@@ -8,11 +8,14 @@ public class PlayerWinCardGameState : CardGameState
     public static event Action EndedWinState = delegate { };
 
     [SerializeField] Button _menuButton = null;
+    [SerializeField] AudioClip _winJingle = null;
 
     public override void Enter()
     {
         StartedWinState?.Invoke();
         StateMachine.Player.Wins++;
+        MusicController.Instance.StopMusic();
+        AudioHelper.PlayClip2D(_winJingle, 0.5f);
         _menuButton.onClick.AddListener(ReturnToMainMenu);
     }
 

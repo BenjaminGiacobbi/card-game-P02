@@ -5795,10 +5795,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boostCard: {fileID: 279281064}
-  _useButton: {fileID: 1384876514}
-  _skipButton: {fileID: 1671574722}
   _targetPanel: {fileID: 1050233366}
-  _moveTime: 0.8
+  _blockPanel: {fileID: 1005295275}
+  _useButton: {fileID: 1384876515}
+  _skipButton: {fileID: 1671574726}
+  _turnText: {fileID: 1082717146}
+  _moveTime: 0.35
 --- !u!1 &1319332886
 GameObject:
   m_ObjectHideFlags: 0
@@ -6350,7 +6352,7 @@ RectTransform:
   m_GameObject: {fileID: 1418528708}
   m_LocalRotation: {x: -0, y: -0, z: 0.38268343, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000131, y: 1.0000131, z: 1.0000128}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1005716511}
   - {fileID: 1268313533}
@@ -6359,7 +6361,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -473.90002, y: 290}
+  m_AnchoredPosition: {x: -473.65, y: 290}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1418528710
@@ -7546,10 +7548,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ce45a17fc8818d144b392b40c9013dba, type: 2}
   _playerBoostDeck:
   - {fileID: 11400000, guid: f9bb814b046d82c42b55fb37ba22756a, type: 2}
-  - {fileID: 11400000, guid: 25ca0a3a7d17d384eaab4d261346b0a1, type: 2}
-  - {fileID: 11400000, guid: ce77b346666871240a9b30a717e650f5, type: 2}
-  - {fileID: 11400000, guid: 337d3e1b7fec21f4eaf97ba19cc08b4b, type: 2}
-  - {fileID: 11400000, guid: 60edcbeaaf8597043977e658ecc98289, type: 2}
   _enemyAbilityDeck:
   - {fileID: 11400000, guid: de369d1b4237b374d9b96bb52c8bfaeb, type: 2}
   - {fileID: 11400000, guid: de369d1b4237b374d9b96bb52c8bfaeb, type: 2}
@@ -7624,6 +7622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _menuButton: {fileID: 1982473377}
+  _loseJingle: {fileID: 8300000, guid: 5bc4dc027e8637943887c90dd0fa56fe, type: 3}
 --- !u!114 &1675131431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7637,6 +7636,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _menuButton: {fileID: 680219996}
+  _winJingle: {fileID: 8300000, guid: f4664257fafffc145b9e424628be0925, type: 3}
 --- !u!114 &1675131432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9560,7 +9560,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 45}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 473.90002, y: -290}
+  m_AnchoredPosition: {x: 473.65, y: -290}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2029262835

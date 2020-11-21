@@ -31,6 +31,14 @@ public class SetupPanelUI : PanelUI
                 AudioHelper.PlayClip2D(_clangAudio, 0.3f);
         }
         _lastXPos = _setupRight.transform.position.x;
+
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            Debug.Log(_setupRight.transform.position);
+            Debug.Log(_setupLeft.transform.position);
+            Debug.Log(_vsRight.transform.position);
+            Debug.Log(_vsLeft.transform.position);
+        }
     }
 
     public override void OpenAnimation()
@@ -50,27 +58,23 @@ public class SetupPanelUI : PanelUI
         CloseTranslation(_setupLeft, "Left");
         CloseTranslation(_vsRight, "Right");
         CloseTranslation(_vsLeft, "Left");
-        LeanTween.delayedCall(_moveTime + 0.5f, ClosePanel);
+        LeanTween.delayedCall(_moveTime - 0.01f, ClosePanel);
     }
 
     private void OpenTranslation(GameObject panel, string direction)
     {
         float distance = DistanceDirection(direction);
-        Vector2 position = panel.transform.position;
-        Debug.DrawRay(position, -Vector3.forward * 2000, Color.blue, 20f);
-        panel.transform.position = new Vector2(position.x + distance, position.y);
-        LeanTween.move(panel, position, _moveTime).setEaseOutBounce();
+        float xPos = panel.transform.position.x;
+        panel.transform.position = new Vector3(xPos + distance, panel.transform.position.y, panel.transform.position.z);
+        LeanTween.move(panel, new Vector3(xPos, panel.transform.position.y, panel.transform.position.z), _moveTime).setEaseOutBounce();
     }
 
     private void CloseTranslation(GameObject panel, string direction)
     {
         float distance = DistanceDirection(direction);
-        Vector2 position = panel.transform.position;
-        Debug.Log(position);
-        Debug.DrawRay(position, -Vector3.forward * 2000, Color.blue, 10f);
-        Vector2 targetPos = new Vector2(position.x + distance, position.y);
-        LeanTween.move(panel, targetPos, _moveTime).setOnComplete(
-            () => { panel.transform.Translate(position); });
+        float xPos = panel.transform.position.x;
+        LeanTween.move(panel, new Vector3(xPos + distance, panel.transform.position.y, panel.transform.position.z), _moveTime).setOnComplete(
+            () => { panel.transform.position = new Vector3(xPos, panel.transform.position.y, panel.transform.position.z); });
     }
 
     private void ClosePanel()
