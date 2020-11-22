@@ -216,7 +216,7 @@ public class CardGameController : MonoBehaviour, IDamageable, ITargetable, IBoos
     {
         CurrentHealth -= Mathf.CeilToInt(damage * _damageModifier);
         if(_damageSound)
-            AudioHelper.PlayClip2D(_damageSound, 0.5f);
+            AudioHelper.PlayClip2D(_damageSound, 0.85f);
         RaiseHealth(CurrentHealth);
         if (CurrentHealth < 0)
             Kill();

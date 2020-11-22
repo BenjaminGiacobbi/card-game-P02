@@ -1106,7 +1106,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 4e5b3df2d21588a49a719d03766ee476, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1543,7 +1543,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 4e5b3df2d21588a49a719d03766ee476, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1881,10 +1881,10 @@ MonoBehaviour:
   _damageModifier: 1
   _actions: 1
   _maxHealth: 30
-  _damageSound: {fileID: 0}
+  _damageSound: {fileID: 8300000, guid: 6195042849fdfe044a6a450f6768028e, type: 3}
   _board: {fileID: 1329499007}
   _boostStepPercent: 0.75
-  _turnBoostPercent: 0.45
+  _turnBoostPercent: 0.3
   _prioritizeWeakenedPercent: 0.7
   _playOpposedPercent: 1
   _playWeightedPercent: 0.6
@@ -2785,7 +2785,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 4e5b3df2d21588a49a719d03766ee476, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3025,7 +3025,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 4e5b3df2d21588a49a719d03766ee476, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5857,7 +5857,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1290197468
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6762,7 +6762,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1551951165
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7362,7 +7362,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 4e5b3df2d21588a49a719d03766ee476, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8301,7 +8301,7 @@ MonoBehaviour:
   _damageModifier: 1
   _actions: 1
   _maxHealth: 30
-  _damageSound: {fileID: 0}
+  _damageSound: {fileID: 8300000, guid: 6195042849fdfe044a6a450f6768028e, type: 3}
   _selectedAudio: {fileID: 8300000, guid: 880a82ce9d38b6844a0fac3e2fb37159, type: 3}
   _droppedAudio: {fileID: 8300000, guid: 2ef2276009753924987924e10cee541a, type: 3}
   _clickFailAudio: {fileID: 8300000, guid: 3debf4d1bac8a09459c23ad58fe7648d, type: 3}
@@ -10116,7 +10116,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Boost Mobile Card Game
+  m_Text: Battle Card Game Project
 --- !u!222 &2083588834
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -27,19 +27,20 @@ public class PlayBoard : MonoBehaviour
             if (pair.Player.Creature && pair.Enemy.Creature)
             {
                 // gets battle information
-                int predictPlayerHP = pair.Player.Creature.CurrentHealth - Mathf.CeilToInt(
+                int totalEnemyAttack = Mathf.CeilToInt(
                     pair.Enemy.Creature.AttackDamage * pair.Player.Creature.DefenseModifier) * pair.Enemy.Creature.CurrentActions;
-                int predictEnemyHP = pair.Enemy.Creature.CurrentHealth - Mathf.CeilToInt(
+                int predictPlayerHP = pair.Player.Creature.CurrentHealth - totalEnemyAttack;
+
+                int totalPlayerAttack = Mathf.CeilToInt(
                     pair.Player.Creature.AttackDamage * pair.Enemy.Creature.DefenseModifier) * pair.Player.Creature.CurrentActions;
+                int predictEnemyHP = pair.Enemy.Creature.CurrentHealth - totalPlayerAttack;
 
                 // sets a priority attacker
                 Creature priorityAttacker = null;
                 Creature secondaryAttacker = null;
-                if ((predictPlayerHP <= 0 && predictEnemyHP <= 0 && 
-                    ((Mathf.CeilToInt(pair.Player.Creature.AttackDamage * pair.Enemy.Creature.DefenseModifier) * pair.Player.Creature.CurrentActions) >
-                    (Mathf.CeilToInt(pair.Enemy.Creature.AttackDamage * pair.Player.Creature.DefenseModifier) * pair.Enemy.Creature.CurrentActions))) ||
-                    (pair.Player.Creature.CurrentActions >= pair.Enemy.Creature.CurrentActions && 
-                    predictPlayerHP > 0 && predictEnemyHP > 0))
+                if ((predictPlayerHP <= 0 && predictEnemyHP <= 0 && totalPlayerAttack > totalEnemyAttack) ||
+                    (pair.Player.Creature.CurrentActions >= pair.Enemy.Creature.CurrentActions && predictPlayerHP > 0 && predictEnemyHP > 0) ||
+                    predictPlayerHP > 0 && predictEnemyHP <= 0)
                 {
                     priorityAttacker = pair.Player.Creature;
                     secondaryAttacker = pair.Enemy.Creature;

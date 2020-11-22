@@ -56,7 +56,7 @@ public class BoostDeckView : MonoBehaviour, IDeckView<BoostCard>
                 _animView.Display(deck.GetCard(0));
                 _animView.gameObject.SetActive(true);
                 RectTransform rect = _boostCardPrefab.GetComponent<RectTransform>();
-                Vector3 newPos = new Vector3(rect.transform.position.x, rect.transform.position.y + rect.rect.height / 2, 0);
+                Vector3 newPos = new Vector3(rect.transform.position.x, rect.transform.position.y + rect.rect.height, 0);
                 LeanTween.move(_animView.gameObject, newPos, AnimationTime/2).setOnComplete(FinishFlipAnimation);
                 _mainView.Display(deck.TopItem);
             }
