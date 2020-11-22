@@ -24,7 +24,6 @@ public class BoardSpace : MonoBehaviour, ITargetable
             // this is hard to debug because card.Play()'s use of the play effect depends on CurrentTarget
             TargetController.CurrentTarget = GetComponent<ITargetable>();
             card.Play();
-            Creature.Died += ClearCreatureState;
             return true;
         }
         else
@@ -43,13 +42,16 @@ public class BoardSpace : MonoBehaviour, ITargetable
     {
         if(_spawnParticles)
             _spawnParticles.PlayComponents();
+        Creature.Died += ClearCreatureState;
     }
 
-    public void KillCreature()
+    public void ResetCreature()
     {
         if (Creature != null)
         {
-            Creature.Kill();
+            Creature.Died -= ClearCreatureState;
+            Creature.PoolReturn();
+            Creature = null;
         }   
     }
 
@@ -63,7 +65,6 @@ public class BoardSpace : MonoBehaviour, ITargetable
         Creature.Died -= ClearCreatureState;
         Creature = null;
     }
-
 }
 
 public enum SpaceType

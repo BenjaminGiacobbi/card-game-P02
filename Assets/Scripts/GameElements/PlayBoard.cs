@@ -35,8 +35,11 @@ public class PlayBoard : MonoBehaviour
                 // sets a priority attacker
                 Creature priorityAttacker = null;
                 Creature secondaryAttacker = null;
-
-                if (pair.Player.Creature.CurrentActions >= pair.Enemy.Creature.CurrentActions)
+                if ((predictPlayerHP <= 0 && predictEnemyHP <= 0 && 
+                    ((Mathf.CeilToInt(pair.Player.Creature.AttackDamage * pair.Enemy.Creature.DefenseModifier) * pair.Player.Creature.CurrentActions) >
+                    (Mathf.CeilToInt(pair.Enemy.Creature.AttackDamage * pair.Player.Creature.DefenseModifier) * pair.Enemy.Creature.CurrentActions))) ||
+                    (pair.Player.Creature.CurrentActions >= pair.Enemy.Creature.CurrentActions && 
+                    predictPlayerHP > 0 && predictEnemyHP > 0))
                 {
                     priorityAttacker = pair.Player.Creature;
                     secondaryAttacker = pair.Enemy.Creature;
@@ -78,7 +81,6 @@ public class PlayBoard : MonoBehaviour
             {
                 for (int i = 0; i < pair.Player.Creature.CurrentActions; i++)
                 {
-                    Debug.Log("Generating Command" + i);
                     _invoker.AddCommandToQueue(new AttackCommand(pair.Player.Creature, TargetController.CurrentEnemy));
                 }
             }
@@ -87,7 +89,6 @@ public class PlayBoard : MonoBehaviour
             {
                 for (int i = 0; i < pair.Enemy.Creature.CurrentActions; i++)
                 {
-                    Debug.Log("Generating Command" + i);
                     _invoker.AddCommandToQueue(new AttackCommand(pair.Enemy.Creature, TargetController.CurrentPlayer));
                 }
             }
@@ -98,8 +99,8 @@ public class PlayBoard : MonoBehaviour
     {
         foreach (SpacePair pair in PairsArray)
         {
-            pair.Player.KillCreature();
-            pair.Enemy.KillCreature();
+            pair.Player.ResetCreature();
+            pair.Enemy.ResetCreature();
         }
     }
 }

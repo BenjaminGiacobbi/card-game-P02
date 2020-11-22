@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _baseHealth: 1
-  _attackDamage: 12
+  _attackDamage: 14
   _name: GlassCannon
 --- !u!114 &8592505451381628443
 MonoBehaviour:
@@ -663,7 +663,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 8902264818730145240}
   m_FillRect: {fileID: 7704643038135148601}
   m_HandleRect: {fileID: 7759559859508522045}
@@ -10428,8 +10428,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 737734f5c73e1a24aa5aa404878c690b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _objectParticles: {fileID: 0}
-  _objectAudio: {fileID: 0}
+  _audioVolume: 0.5
 --- !u!1 &6594479022137168023
 GameObject:
   m_ObjectHideFlags: 0

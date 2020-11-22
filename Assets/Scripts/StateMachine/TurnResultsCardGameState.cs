@@ -1,25 +1,21 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class TurnResultsCardGameState : CardGameState
 {
+    public static event Action ResultsBegan = delegate { };
+    public static event Action ResultsEnded = delegate { };
+
     [SerializeField] PlayBoard _board = null;
     [SerializeField] CommandInvoker _boardInvoker = null;
     [SerializeField] float _delayTime = 2f;
-    [SerializeField] Text _resultsText = null;
-
-    private void Start()
-    {
-        _resultsText.gameObject.SetActive(false);
-    }
 
     public override void Enter()
     {
         // some code to move into this state
-        _resultsText.text = "Results...";
-        _resultsText.gameObject.SetActive(true);
+        ResultsBegan?.Invoke();
         StartCoroutine(BattleRoutine());
     }
 
@@ -60,6 +56,6 @@ public class TurnResultsCardGameState : CardGameState
 
     public override void Exit()
     {
-        _resultsText.gameObject.SetActive(false);
+        ResultsEnded?.Invoke();
     }
 }

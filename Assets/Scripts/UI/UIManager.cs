@@ -8,7 +8,6 @@ public class UIManager : MonoBehaviour
     // TODO this is a major mess, pffload these into individual scripts on each menu panel that derive from an abstract class
 
     [SerializeField] PlayerController _player = null;
-    [SerializeField] Text _turnText = null;
     [SerializeField] Text _playerTurnText = null;
 
     [SerializeField] BoostCardView _boostCardPrefab = null;
@@ -16,10 +15,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject _menuPanel = null;
     [SerializeField] PanelUI _setupPanel = null;
     [SerializeField] PanelUI _boostStepPanel = null;
-    [SerializeField] GameObject _mainPlayerPanel = null;
+    [SerializeField] PanelUI _mainPlayerPanel = null;
+    [SerializeField] PanelUI _enemyPanel = null;
+    [SerializeField] PanelUI _resultsPanel = null;
     [SerializeField] GameObject _losePanel = null;
     [SerializeField] GameObject _winPanel = null;
-    [SerializeField] GameObject _blockPanel = null;
 
     [Header("These four panels should implement IDeckView interfaces")]
     [SerializeField] Image _handDeckPanel = null;
@@ -44,17 +44,20 @@ public class UIManager : MonoBehaviour
         MenuCardGameState.EnteredMenu += ShowMenu;
         MenuCardGameState.ExitedMenu += HideMenu;
         SetupCardGameState.StartedSetup += ShowSetupGraphics;
-        SetupCardGameState.StartedSetup -= ResetTurnDisplay;
+        SetupCardGameState.StartedSetup += ResetTurnDisplay;
         SetupCardGameState.StartedSetup += HideMainPanel;
         SetupCardGameState.EndedSetup += HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep += ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep += HideBoostStep;
-        BoostStepCardGameState.BoostCardChosen -= AnimateBoostStep;
+        BoostStepCardGameState.PlayerBoosted += AnimateBoostStep;
+        BoostStepCardGameState.EnemyBoosted += DisplayEnemyBoost;
         PlayerTurnCardGameState.StartedPlayerTurn += ShowMainPanel;
         PlayerTurnCardGameState.StartedPlayerTurn += UpdateTurnDisplay;
         PlayerTurnCardGameState.EndedPlayerTurn += HideMainPanel;
         EnemyTurnCardGameState.EnemyTurnBegan += OnEnemyTurnBegan;
         EnemyTurnCardGameState.EnemyTurnEnded += OnEnemyTurnEnded;
+        TurnResultsCardGameState.ResultsBegan += OnResultsBegan;
+        TurnResultsCardGameState.ResultsEnded += OnResultsEnded;
         PlayerWinCardGameState.StartedWinState += ShowWinPanel;
         PlayerWinCardGameState.EndedWinState += HideWinPanel;
         PlayerLoseCardGameState.StartedLoseState += ShowLosePanel;
@@ -78,12 +81,15 @@ public class UIManager : MonoBehaviour
         SetupCardGameState.EndedSetup -= HideSetupGraphics;
         BoostStepCardGameState.StartedBoostStep -= ShowBoostStep;
         BoostStepCardGameState.EndedBoostStep -= HideBoostStep;
-        BoostStepCardGameState.BoostCardChosen -= AnimateBoostStep;
+        BoostStepCardGameState.PlayerBoosted -= AnimateBoostStep;
+        BoostStepCardGameState.EnemyBoosted -= DisplayEnemyBoost;
         PlayerTurnCardGameState.StartedPlayerTurn -= ShowMainPanel;
         PlayerTurnCardGameState.StartedPlayerTurn -= UpdateTurnDisplay;
         PlayerTurnCardGameState.EndedPlayerTurn -= HideMainPanel;
         EnemyTurnCardGameState.EnemyTurnBegan -= OnEnemyTurnBegan;
         EnemyTurnCardGameState.EnemyTurnEnded -= OnEnemyTurnEnded;
+        TurnResultsCardGameState.ResultsBegan -= OnResultsBegan;
+        TurnResultsCardGameState.ResultsEnded-= OnResultsEnded;
         PlayerWinCardGameState.StartedWinState -= ShowWinPanel;
         PlayerWinCardGameState.EndedWinState -= HideWinPanel;
         PlayerLoseCardGameState.StartedLoseState -= ShowLosePanel;
@@ -118,12 +124,6 @@ public class UIManager : MonoBehaviour
 
         _abilityObject.SetActive(false);
         _boostObject.SetActive(false);
-        _playerTurnText.gameObject.SetActive(false);
-        _blockPanel.SetActive(false);
-
-        RectTransform rectTransform = _blockPanel.GetComponent<RectTransform>();
-        _point1 = new Vector3(rectTransform.position.x, rectTransform.position.y + rectTransform.rect.height, rectTransform.position.z);
-        _point2 = new Vector4(rectTransform.position.x, rectTransform.position.y - rectTransform.rect.height, rectTransform.position.z);
     }
 
     private void Update()
@@ -186,13 +186,13 @@ public class UIManager : MonoBehaviour
     {
         _setupPanel.OpenAnimation();
         _boostStepPanel.gameObject.SetActive(true);
-        _mainPlayerPanel.SetActive(true);
+        _mainPlayerPanel.gameObject.SetActive(true);
     }
 
     private void HideSetupGraphics()
     {
         _boostStepPanel.gameObject.SetActive(false);
-        _mainPlayerPanel.SetActive(false);
+        _mainPlayerPanel.gameObject.SetActive(false);
         _setupPanel.CloseAnimation();
     }
 
@@ -212,44 +212,46 @@ public class UIManager : MonoBehaviour
         _boostStepView.ShowDeck(_player.BoostDeck);
     }
 
+    private void DisplayEnemyBoost(bool choice)
+    {
+        BoostPanelUI boostUI = _boostStepPanel as BoostPanelUI;
+        if(boostUI)
+            boostUI.DisplayEnemyBoostChoice(choice);
+    }
+
     private void ShowMainPanel()
     {
-        _blockPanel.SetActive(true);
-        _mainPlayerPanel.SetActive(true);
-        _playerTurnText.gameObject.SetActive(true);
-        _turnText.text = "Player Step";
-        _turnText.transform.position = _point2;
-        _turnText.gameObject.SetActive(true);
-        LeanTween.move(_turnText.gameObject, _blockPanel.transform.position, 1f).setEaseInOutBack().setOnComplete(
-            () => { StartCoroutine(MainPanelRoutine()); });
+        _mainPlayerPanel.OpenAnimation();
     }
 
     private void HideMainPanel()
     {
-        _turnText.gameObject.SetActive(false);
-        _mainPlayerPanel.SetActive(false);
-        _playerTurnText.gameObject.SetActive(false);
+        _mainPlayerPanel.CloseAnimation();
+        _playerTurnText.text = "Turn: ";
     }
 
     private void OnEnemyTurnBegan()
     {
-        _blockPanel.SetActive(true);
-        _turnText.text = "Enemy Step";
-        _turnText.transform.position = _point2;
-        _turnText.gameObject.SetActive(true);
-        LeanTween.move(_turnText.gameObject, _blockPanel.transform.position, 0.5f).setEaseInOutBack();
+        _enemyPanel.OpenAnimation();
     }
 
     private void OnEnemyTurnEnded()
     {
-        LeanTween.move(_turnText.gameObject, _point2, 0.5f).setOnComplete(
-            () => { _blockPanel.SetActive(false); }).setOnComplete(
-                () => { _turnText.gameObject.SetActive(false); });
+        _enemyPanel.CloseAnimation();
+    }
+
+    private void OnResultsBegan()
+    {
+        _resultsPanel.OpenAnimation();
+    }
+
+    private void OnResultsEnded()
+    {
+        _resultsPanel.CloseAnimation();
     }
 
     private void ShowWinPanel()
     {
-        _blockPanel.SetActive(false);
         _winPanel.SetActive(true);
     }
 
@@ -260,7 +262,6 @@ public class UIManager : MonoBehaviour
 
     private void ShowLosePanel()
     {
-        _blockPanel.SetActive(false);
         _losePanel.SetActive(true);
     }
 
@@ -290,13 +291,5 @@ public class UIManager : MonoBehaviour
     {
         _abilityObject.SetActive(false);
         _boostObject.SetActive(false);
-    }
-
-    private IEnumerator MainPanelRoutine()
-    {
-        yield return new WaitForSeconds(0.75f);
-
-        LeanTween.move(_turnText.gameObject, _point2, 1f).setOnComplete(
-                () => { _blockPanel.SetActive(false); });
     }
 }

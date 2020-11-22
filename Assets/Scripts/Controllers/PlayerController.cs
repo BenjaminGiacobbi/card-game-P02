@@ -73,7 +73,7 @@ public class PlayerController : CardGameController, IDamageable, ITargetable, IB
             {
                 RaycastHit hit = GetPointerRaycast();
                 BoardSpace space = hit.collider?.GetComponent<BoardSpace>();
-                if (space != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("PlayerSpace"))
+                if (space != null) // && hit.collider.gameObject.layer == LayerMask.NameToLayer("PlayerSpace"))
                 {
                     if (!space.UseCard(card))
                     {

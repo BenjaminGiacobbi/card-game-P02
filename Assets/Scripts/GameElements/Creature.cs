@@ -60,9 +60,14 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
 
     public void Kill()
     {
-        Died?.Invoke();
-        gameObject.SetActive(false);
-        LeanTween.delayedCall(0.55f, () => { ObjectPooler.Instance.ReturnToPool(Name, gameObject); });
+        Died.Invoke();
+        LeanTween.delayedCall(0.55f, PoolReturn);
+        LeanTween.delayedCall(0.05f, () => { gameObject.SetActive(false); });
+    }
+
+    public void PoolReturn()
+    {
+        ObjectPooler.Instance.ReturnToPool(Name, gameObject);
     }
 
     public void TakeDamage(int damage)
@@ -70,7 +75,10 @@ public class Creature : MonoBehaviour, ITargetable, IDamageable, IBoostable
         CurrentHealth -= Mathf.CeilToInt(damage * DefenseModifier);
         HealthSet?.Invoke(CurrentHealth);
         if (_currentHealth <= 0)
+        {
             Kill();
+        }
+            
     }
 
     public void ApplyDamage(ITargetable target)

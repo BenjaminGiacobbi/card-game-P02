@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class ParticleBase : MonoBehaviour
 {
+    [SerializeField] float _audioVolume = 0.5f;
     ParticleSystem _objectParticles = null;
     AudioSource _objectAudio = null;
 
@@ -23,7 +24,7 @@ public class ParticleBase : MonoBehaviour
             _objectParticles.Play();
             
         if(_objectAudio != null && _objectAudio.clip != null)
-            AudioHelper.PlayClip2D(_objectAudio.clip, 0.5f);
+            AudioHelper.PlayClip2D(_objectAudio.clip, _audioVolume);
     }
 
     public void ChangeColor(Color color)

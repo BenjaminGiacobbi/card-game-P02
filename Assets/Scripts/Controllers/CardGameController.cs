@@ -24,6 +24,7 @@ public class CardGameController : MonoBehaviour, IDamageable, ITargetable, IBoos
     [SerializeField] protected float _damageModifier = 1.0f;
     [SerializeField] protected int _actions = 1;
     [SerializeField] protected int _maxHealth = 30;
+    [SerializeField] AudioClip _damageSound = null;
     protected int _currentHealth;
 
     public virtual int MaxHandSize
@@ -214,6 +215,8 @@ public class CardGameController : MonoBehaviour, IDamageable, ITargetable, IBoos
     public virtual void TakeDamage(int damage)
     {
         CurrentHealth -= Mathf.CeilToInt(damage * _damageModifier);
+        if(_damageSound)
+            AudioHelper.PlayClip2D(_damageSound, 0.5f);
         RaiseHealth(CurrentHealth);
         if (CurrentHealth < 0)
             Kill();

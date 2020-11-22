@@ -52,13 +52,13 @@ public class CreatureUI : MonoBehaviour
     private void Start()
     {
         _hpSlider.minValue = 0;
-        _startingPosition = transform.position;
         _attackText.text = "Atk: " + _attachedCreature.AttackDamage;
     }
 
     private void CalibrateUI()
     {
         _hpSlider.maxValue = _attachedCreature.BaseHealth;
+        _startingPosition = transform.position;
         _uiGroup.transform.LookAt(new Vector3(Camera.main.transform.position.x, transform.position.y, Camera.main.transform.position.z));
         _uiGroup.transform.Rotate(new Vector3(0, 180, 0));
     }

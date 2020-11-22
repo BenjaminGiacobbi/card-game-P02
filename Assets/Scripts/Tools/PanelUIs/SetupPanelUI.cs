@@ -43,16 +43,19 @@ public class SetupPanelUI : PanelUI
 
     public override void OpenAnimation()
     {
+        _blockPanel.gameObject.SetActive(true);
         _backingPanel.SetActive(true);
         OpenTranslation(_setupRight, "Right");
         OpenTranslation(_setupLeft, "Left");
         OpenTranslation(_vsRight, "Right");
         OpenTranslation(_vsLeft, "Left");
         gameObject.SetActive(true);
+        LeanTween.delayedCall(_moveTime, () => { _blockPanel.gameObject.SetActive(false); });
     }
 
     public override void CloseAnimation()
     {
+        _blockPanel.gameObject.SetActive(true);
         _backingPanel.SetActive(false);
         CloseTranslation(_setupRight, "Right");
         CloseTranslation(_setupLeft, "Left");

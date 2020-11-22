@@ -45,7 +45,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
     private bool RollChance(float percentChance)
     {
         float random = UnityEngine.Random.Range(0.0f, 1.0f);
-        if (random >= (1 - percentChance))
+        if (random > (1 - percentChance))
             return true;
         else
             return false;
@@ -64,7 +64,7 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
 
 
     // chance for boost card, set this object to target, and boost
-    public void BoostStepSequence()
+    public bool BoostStepSequence()
     {
         if(BoostDeck.Count > 0)
         {
@@ -73,8 +73,11 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             {
                 _invoker.ExecuteCommand(new BoostCommand(this, GetComponent<ITargetable>()));
                 RaiseBoost(BoostDeck);
+                return true;
             }
+            return false;
         }
+        return false;
     }
 
 
@@ -107,7 +110,6 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
         yield return new WaitForSeconds(1.5f);
 
         StartedSequence?.Invoke();
-        /*
         // process sequence while actions remain
         while (Actions > 0)
         {
@@ -156,7 +158,6 @@ public class EnemyController : CardGameController, IDamageable, ITargetable, IBo
             EndedSequence?.Invoke();
             yield break;
         }
-        */
         EndedSequence?.Invoke();
         yield break;
     }

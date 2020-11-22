@@ -173,7 +173,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 3882451541221552034}
   m_FillRect: {fileID: 3345436146119175943}
   m_HandleRect: {fileID: 2318957853345055012}
@@ -6394,8 +6394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 737734f5c73e1a24aa5aa404878c690b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _objectParticles: {fileID: 0}
-  _objectAudio: {fileID: 0}
+  _audioVolume: 0.5
 --- !u!1 &6904811509734409508
 GameObject:
   m_ObjectHideFlags: 0

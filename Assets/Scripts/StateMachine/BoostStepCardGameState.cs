@@ -8,7 +8,8 @@ public class BoostStepCardGameState : CardGameState
 {
     public static event Action StartedBoostStep = delegate { };
     public static event Action EndedBoostStep = delegate { };
-    public static event Action BoostCardChosen = delegate { };
+    public static event Action PlayerBoosted = delegate { };
+    public static event Action<bool> EnemyBoosted = delegate { };
 
     [SerializeField] Button _useBoostButton = null;
     [SerializeField] Button _skipBoostButton = null;
@@ -21,8 +22,8 @@ public class BoostStepCardGameState : CardGameState
 
     public override void Enter()
     {
-        _useBoostButton.onClick.AddListener(Boost);
-        _skipBoostButton.onClick.AddListener(ToPlayerTurn);
+        _useBoostButton.onClick.AddListener(PlayerBoost);
+        _skipBoostButton.onClick.AddListener(EnemyBoost);
         _useBoostButton.interactable = true;
         _skipBoostButton.interactable = true;
         _useBoostButton.gameObject.SetActive(true);
@@ -34,33 +35,42 @@ public class BoostStepCardGameState : CardGameState
 
     public override void Exit()
     {
-        _useBoostButton.onClick.RemoveListener(Boost);
-        _skipBoostButton.onClick.RemoveListener(ToPlayerTurn);
+        _useBoostButton.onClick.RemoveListener(PlayerBoost);
+        _skipBoostButton.onClick.RemoveListener(EnemyBoost);
         EndedBoostStep?.Invoke();
     }
 
-    private void Boost()
+    private void PlayerBoost()
     {
         // access player controller and tell it to use top boost card/update whatever it needs
-        _useBoostButton.interactable = false;
-        _skipBoostButton.interactable = false;
+        
         TargetController.SetTargetToPlayer();
-        StateMachine.Player.BoostAction(1);   
+        StateMachine.Player.BoostAction(1);
         StateMachine.Player.PlayBoostCard();
-        StartCoroutine(PlayerTurnRoutine());
+        PlayerBoosted.Invoke();
+        EnemyBoost();
     }
 
-    private void ToPlayerTurn()
+    private void EnemyBoost()
     {
         StateMachine.Enemy.BoostAction(1);
-        StateMachine.Enemy.BoostStepSequence();
-        StateMachine.ChangeState<PlayerTurnCardGameState>();
+        if (StateMachine.Enemy.BoostStepSequence())
+        {
+            EnemyBoosted?.Invoke(true);
+        }
+        else
+        {
+            EnemyBoosted?.Invoke(false);
+            StateMachine.Enemy.BoostAction(-1);
+        }
+        StartCoroutine(ToTurnRoutine());
     }
 
-    IEnumerator PlayerTurnRoutine()
+    IEnumerator ToTurnRoutine()
     {
-        BoostCardChosen.Invoke();
+        _useBoostButton.interactable = false;
+        _skipBoostButton.interactable = false;
         yield return new WaitForSeconds(0.8f);
-        ToPlayerTurn();
+        StateMachine.ChangeState<PlayerTurnCardGameState>();
     }
 }
