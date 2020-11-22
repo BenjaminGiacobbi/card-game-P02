@@ -31,7 +31,7 @@ public class MenuCardGameState : CardGameState
             
         _winsText.text = StateMachine.Player.Wins.ToString();
         _lossesText.text = StateMachine.Player.Losses.ToString();
-        _ratioText.text = ((float)StateMachine.Player.Wins / StateMachine.Player.Losses != 0 ? StateMachine.Player.Losses : 1) + "W/L";
+        _ratioText.text = ((float)StateMachine.Player.Wins / (StateMachine.Player.Losses != 0 ? StateMachine.Player.Losses : 1)) + " W/L";
         _startButton.onClick.AddListener(StartGame);
         _quitButton.onClick.AddListener(QuitGame);
         _guideButton.onClick.AddListener(GuideButtonState);
